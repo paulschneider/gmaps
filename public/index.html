@@ -1,0 +1,78 @@
+ <!DOCTYPE html>
+<html>
+	<head>
+		<meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+		<meta charset="utf-8">
+		<title>North West Mental Health</title>
+		<link rel="stylesheet" type="text/css" href="dist/css/main.css">
+	</head>
+	<body>
+		<div id="map"></div>		
+		
+		<p>
+			<label>Filter by age</label>
+			<select id="age-filter" name="ages">
+				<option value="">All age groups</option>
+				<option value="youth">Youth 16 to 25</option>
+				<option value="adult">Adult 25 to 55</option>
+				<option value="senior">Other adult 55+</option>
+			</select>
+		</p>
+	
+		<p>
+			<label>Filter by service type</label>
+			<select id="service-type-filter" name="service-types">
+				<option value="">All service types</option>
+				<option value="inpatient-unit">Inpatient Unit (IPU)</option>
+				<option value="residential">Residential</option>
+				<option value="community-care">Community Care Unit (CCU)</option>
+				<option value="prevention-recovery">Prevention and Recovery Care (PARC)</option>
+				<option value="community-team">Community Team</option>
+				<option value="general-admin-queries">General Administration Queries</option>
+				<option value="specialist-service">Specialist Service</option>
+				<option value="emergency-mental-health">Emergency Mental Health (EMH)</option>
+			</select>
+		</p>
+
+		<ul>
+			<li>
+				<div class="service">
+					<h3>The Northern Hospital</h3>
+					185 Cooper St, <br /> 
+					Epping <br /> 
+					VIC<br /> 
+					3076
+					<p>
+						<a class="show-hide" href="#" data-hospital-id="1">Show on Map</a>
+					</p>	
+				</div>
+			</li>
+			<li>
+				<div class="service">
+					<h3>The Royal Melbourne Hospital</h3>
+					300 Grattan St, <br /> 
+					Parkville <br /> 
+					VIC<br /> 
+					3050
+					<p>
+						<a class="show-hide" href="#" data-hospital-id="2">Show on Map</a>
+					</p>	
+				</div>
+			</li>
+			<li>
+				<div class="service">
+					<h3>Werribee Mercy Hospital</h3>
+					300-310 Princes Hwy, <br /> 
+					Werribee <br /> 
+					VIC<br /> 
+					3030
+					<p>
+						<a class="show-hide" href="#" data-hospital-id="3">Show on Map</a>
+					</p>	
+				</div>
+			</li>			
+		</ul>
+
+		<script src="./dist/js/maps.bundle.js"></script>    
+	</body>
+</html>
