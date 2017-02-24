@@ -103,8 +103,6 @@
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
-
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 	var Map = function () {
@@ -145,10 +143,9 @@
 					});
 
 					_this.loadKml(_this.config.kml.start);
-					_this.addMarkers();
+					_this.addMarkers(true);
 					_this.compileAges();
 					_this.compileServiceTypes();
-					_this.showAllMarkers();
 				});
 			}
 
@@ -178,14 +175,17 @@
 
 		}, {
 			key: "addMarkers",
-			value: function addMarkers() {
+			value: function addMarkers(displayOnMap) {
 				var _this3 = this;
 
 				// iterate over the services and put them on the map
 				this.services.forEach(function (service) {
 					var marker = new _Marker2.default(service);
-
 					_this3.markers.push(marker);
+
+					if (displayOnMap) {
+						_this3.showMarker(marker.id);
+					}
 				});
 			}
 
@@ -201,10 +201,7 @@
 
 				this.markers.forEach(function (marker) {
 					if (marker.id === parseInt(markerId)) {
-						var visibility = !marker.visible ? _this4.map : null;
-						marker.pin.setMap(visibility);
-
-						marker.setVisibility();
+						marker.pin.setMap(marker.setVisibility(_this4.map));
 					}
 				}, markerId);
 			}
@@ -242,8 +239,8 @@
 				var _this6 = this;
 
 				this.markers.forEach(function (service) {
-					for (var type in service.serviceTypes) {
-						serviceType = service.serviceTypes[type];
+					for (var index in service.services) {
+						var serviceType = service.services[index];
 
 						if (!_this6.serviceTypes[serviceType]) {
 							_this6.serviceTypes[serviceType] = [];
@@ -262,7 +259,6 @@
 		}, {
 			key: "filterByAge",
 			value: function filterByAge(selected) {
-				console.log(selected);
 				this.addFilter("ageFilter", selected).apply();
 			}
 
@@ -287,13 +283,8 @@
 			value: function apply() {
 				var _this7 = this;
 
-				this.showAllMarkers();
-
+				console.log(JSON.stringify(this.filters));
 				this.filters.forEach(function (filter) {
-					if (!filter.value) {
-						return _this7.removeFilter(filter.method);
-					}
-
 					_this7[filter.method](filter.value);
 				});
 			}
@@ -308,14 +299,11 @@
 			value: function ageFilter(selected) {
 				var _this8 = this;
 
-				new Promise(function (resolve, reject) {
-					var markers = _this8.getActiveMarkers();
+				this.showAllMarkers();
 
-					if (markers) {
-						resolve(markers);
-					}
+				new Promise(function (resolve, reject) {
+					resolve(_this8.getActiveMarkers());
 				}).then(function (markers) {
-					console.log(selected);
 					if (!selected) {
 						return _this8.showAllMarkers();
 					}
@@ -349,7 +337,37 @@
 
 		}, {
 			key: "typeFilter",
-			value: function typeFilter(selected) {}
+			value: function typeFilter(selected) {
+				var _this9 = this;
+
+				new Promise(function (resolve, reject) {
+					resolve(_this9.getActiveMarkers());
+				}).then(function (markers) {
+					if (!selected) {
+						return _this9.showAllMarkers();
+					}
+
+					var _loop2 = function _loop2(serviceType) {
+						if (serviceType === selected) {
+							// filter the service types to just show the ones that meet 
+							// the selected value
+							var filtered = markers.filter(function (marker) {
+								return _this9.serviceTypes[serviceType].includes(marker);
+							});
+
+							return {
+								v: _this9.showMarkers(filtered)
+							};
+						}
+					};
+
+					for (var serviceType in _this9.serviceTypes) {
+						var _ret2 = _loop2(serviceType);
+
+						if ((typeof _ret2 === "undefined" ? "undefined" : _typeof(_ret2)) === "object") return _ret2.v;
+					}
+				});
+			}
 
 			/**
 	   * show all of the markers in a provided list
@@ -359,12 +377,12 @@
 		}, {
 			key: "showMarkers",
 			value: function showMarkers(markers) {
-				var _this9 = this;
+				var _this10 = this;
 
 				this.hideAllMarkers();
 
 				markers.forEach(function (marker) {
-					_this9.showMarker(marker.id);
+					_this10.showMarker(marker.id);
 				});
 			}
 
@@ -376,10 +394,10 @@
 		}, {
 			key: "showAllMarkers",
 			value: function showAllMarkers() {
-				var _this10 = this;
+				var _this11 = this;
 
 				this.markers.forEach(function (marker) {
-					marker.pin.setMap(_this10.map);
+					marker.pin.setMap(_this11.map);
 					marker.show();
 				});
 			}
@@ -406,26 +424,26 @@
 		}, {
 			key: "addFilter",
 			value: function addFilter(filter, option) {
-				if (!this.filters.includes(filter)) {
-					this.filters.push({ method: filter, value: option });
-				}
+				this.applyFilter(filter, option);
 
 				return this;
 			}
 
 			/**
-	   * clear out any previously set filters
+	   * update an existing filter with the newly selected value
 	   *
 	   */
 
 		}, {
-			key: "removeFilter",
-			value: function removeFilter(active) {
-				for (var filter in this.filters) {
-					if (this.filters[filter] === active) {
-						this.filters = [].concat(_toConsumableArray(this.filters.slice(0, filter)), _toConsumableArray(this.filters.slice(filter + 1)));
+			key: "applyFilter",
+			value: function applyFilter(filter, option) {
+				for (var active in this.filters) {
+					if (this.filters[active].method === filter) {
+						return this.filters[active].value = option;
 					}
 				}
+
+				return this.filters.push({ method: filter, value: option });
 			}
 
 			/**
@@ -439,7 +457,7 @@
 				var activeMarkers = [];
 
 				this.markers.forEach(function (marker) {
-					if (marker.isVisible()) {
+					if (!marker.isHidden()) {
 						activeMarkers.push(marker);
 					}
 				});
@@ -711,8 +729,9 @@
 
 			this.pin = null;
 			this.id = config.id;
-			this.visible = false;
+			this.hidden = true;
 			this.ages = config.ages;
+			this.services = config.services;
 
 			_googleMaps2.default.load(function (google) {
 				_this.pin = new google.maps.Marker({
@@ -731,8 +750,14 @@
 
 		_createClass(Marker, [{
 			key: "setVisibility",
-			value: function setVisibility() {
-				this.visible = !this.visible;
+			value: function setVisibility(map) {
+				if (this.hidden) {
+					this.hidden = false;
+					return map;
+				}
+
+				this.hidden = true;
+				return null;
 			}
 
 			/**
@@ -743,7 +768,7 @@
 		}, {
 			key: "hide",
 			value: function hide() {
-				this.visible = false;
+				this.hidden = true;
 			}
 
 			/**
@@ -754,7 +779,7 @@
 		}, {
 			key: "show",
 			value: function show() {
-				this.visible = true;
+				this.hidden = false;
 			}
 
 			/**
@@ -763,9 +788,10 @@
 	   */
 
 		}, {
-			key: "isVisible",
-			value: function isVisible() {
-				return this.visible;
+			key: "isHidden",
+			value: function isHidden() {
+				console.log("IS HIDDEN", this.hidden);
+				return this.hidden;
 			}
 		}]);
 
@@ -790,7 +816,7 @@
 			lng: 145.0120898
 		},
 		ages: ["youth", "adult"],
-		serviceTypes: ["inpatient-unit", "residential", "community-care"]
+		services: ["inpatient-unit", "residential", "community-care", "community-team"]
 	}, {
 		id: 2,
 		location: {
@@ -798,7 +824,7 @@
 			lng: 144.9541191
 		},
 		ages: ["youth"],
-		serviceTypes: ["prevention-recovery", "inpatient-unit", "general-admin-queries", "emergency-mental-health"]
+		services: ["prevention-recovery", "inpatient-unit", "general-admin-queries", "emergency-mental-health"]
 	}, {
 		id: 3,
 		location: {
@@ -806,7 +832,7 @@
 			lng: 144.6965135
 		},
 		ages: ["senior"],
-		serviceTypes: ["community-team", "specialist-service"]
+		services: ["community-team", "specialist-service"]
 	}]);
 
 /***/ },

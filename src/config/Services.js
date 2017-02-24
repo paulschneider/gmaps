@@ -6,7 +6,7 @@ export const Services = Object.freeze([
 			lng: 145.0120898
 		},
 		ages: ["youth", "adult"],
-		serviceTypes: ["inpatient-unit", "residential", "community-care"]			
+		services: ["inpatient-unit", "residential", "community-care", "community-team"],
 	},
 	{
 		id : 2,
@@ -15,7 +15,7 @@ export const Services = Object.freeze([
 			lng: 144.9541191
 		},
 		ages: ["youth"],
-		serviceTypes: ["prevention-recovery", "inpatient-unit", "general-admin-queries", "emergency-mental-health"]	
+		services: ["prevention-recovery", "inpatient-unit", "general-admin-queries", "emergency-mental-health"],
 	},
 	{
 		id : 3,
@@ -24,6 +24,6 @@ export const Services = Object.freeze([
 			lng: 144.6965135
 		},
 		ages: ["senior"],
-		serviceTypes: ["community-team", "specialist-service"]	
+		services: ["community-team", "specialist-service"],
 	}
 ]);

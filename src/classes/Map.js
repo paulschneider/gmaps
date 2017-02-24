@@ -32,10 +32,9 @@ export default class Map {
 			});
 
 			this.loadKml(this.config.kml.start);
-			this.addMarkers();
+			this.addMarkers(true);
 			this.compileAges();	
 			this.compileServiceTypes();		
-			this.showAllMarkers();
 		});   
 	}
 
@@ -57,12 +56,15 @@ export default class Map {
 	 * add all of the service markers to the map
 	 * 
 	 */
-	addMarkers() {
+	addMarkers(displayOnMap) {
 		// iterate over the services and put them on the map
 		this.services.forEach((service) => {
 			let marker = new Marker(service);
-
 			this.markers.push(marker);
+
+			if(displayOnMap) {
+				this.showMarker(marker.id);
+			}
 		});
 	}
 
@@ -72,11 +74,8 @@ export default class Map {
 	 */
 	showMarker(markerId) {
 		this.markers.forEach((marker) => {		
-			if(marker.id === parseInt(markerId)) {				
-				let visibility = ! marker.visible ? this.map : null; 				
-				marker.pin.setMap(visibility);
-
-				marker.setVisibility();
+			if(marker.id === parseInt(markerId)) {								 				
+				marker.pin.setMap(marker.setVisibility(this.map));
 			}
 		}, markerId);
 	}
@@ -104,9 +103,9 @@ export default class Map {
 	 */
 	compileServiceTypes() {
 		this.markers.forEach((service) => {
-			for(let type in service.serviceTypes) {				
-				serviceType = service.serviceTypes[type];
-					
+			for(let index in service.services) {		
+				let serviceType = service.services[index];
+
 				if(!this.serviceTypes[serviceType]) {
 					this.serviceTypes[serviceType] = [];
 				}
@@ -121,7 +120,6 @@ export default class Map {
 	 * 
 	 */
 	filterByAge(selected) {
-		console.log(selected);
 		this.addFilter("ageFilter", selected).apply();	
 	}
 
@@ -137,14 +135,9 @@ export default class Map {
 	 * iterate over the selected filters and apply them
 	 *
 	 */
-	apply() {		
-		this.showAllMarkers();
-
+	apply() {	
+		console.log(JSON.stringify(this.filters));
 		this.filters.forEach((filter) => {
-			if(!filter.value) {		
-				return this.removeFilter(filter.method);
-			}
-
 			this[filter.method](filter.value);
 		});
 	}
@@ -154,14 +147,12 @@ export default class Map {
 	 * 
 	 */
 	ageFilter(selected) {	
-		new Promise((resolve, reject) => {
-			let markers = this.getActiveMarkers();
 
-			if(markers) {
-				resolve(markers);
-			} 
+		this.showAllMarkers();
+
+		new Promise((resolve, reject) => {
+			resolve(this.getActiveMarkers());
 		}).then((markers) => {
-			console.log(selected);
 			if(!selected) {
 				return this.showAllMarkers();
 			}
@@ -186,6 +177,25 @@ export default class Map {
 	 */
 	typeFilter(selected) {
 
+		new Promise((resolve, reject) => {
+			resolve(this.getActiveMarkers());
+		}).then((markers) => {
+			if(!selected) {
+				return this.showAllMarkers();
+			}
+
+			for(let serviceType in this.serviceTypes) {
+				if(serviceType === selected) {
+					// filter the service types to just show the ones that meet 
+					// the selected value
+					let filtered = markers.filter((marker) => {
+						return this.serviceTypes[serviceType].includes(marker);
+					});
+
+					return this.showMarkers(filtered);
+				}
+			}
+		});	
 	}
 
 	/**
@@ -205,7 +215,7 @@ export default class Map {
 	 * 
 	 */
 	showAllMarkers() {
-		this.markers.forEach((marker) => {			
+		this.markers.forEach((marker) => {		
 			marker.pin.setMap(this.map);
 			marker.show();
 		});
@@ -227,23 +237,23 @@ export default class Map {
 	 * 
 	 */
 	addFilter(filter, option) {
-		if(!this.filters.includes(filter)) {
-			this.filters.push({method: filter, value:  option});	
-		}		
+		this.applyFilter(filter, option);
 
 		return this;
 	}
 
 	/**
-	 * clear out any previously set filters
+	 * update an existing filter with the newly selected value
 	 *
 	 */
-	removeFilter(active) {
-		for(let filter in this.filters) {
-			if(this.filters[filter] === active) {
-				this.filters = [...this.filters.slice(0, filter), ...this.filters.slice(filter+1)];	
+	applyFilter(filter, option) {
+		for(let active in this.filters) {
+			if(this.filters[active].method === filter) {
+				return this.filters[active].value = option;
 			}
 		}
+
+		return this.filters.push({method: filter, value:  option});
 	}
 
 	/**
@@ -254,7 +264,7 @@ export default class Map {
 		let activeMarkers = [];
 
 		this.markers.forEach((marker) => {
-			if(marker.isVisible()) {
+			if(!marker.isHidden()) {
 				activeMarkers.push(marker);
 			}
 		});	

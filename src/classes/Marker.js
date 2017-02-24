@@ -9,8 +9,9 @@ export default class Marker {
 	constructor(config) {
 		this.pin 		= null;
 		this.id 		= config.id;  	
-		this.visible 	= false;  
+		this.hidden 	= true;  
 		this.ages 		= config.ages;
+		this.services 	= config.services;
 
 		GoogleMaps.load((google) => {			
 			this.pin = new google.maps.Marker({
@@ -25,8 +26,14 @@ export default class Marker {
 	 * toggle the visibility flag of the marker
 	 * 
 	 */
-	setVisibility() {
-		this.visible = !this.visible;
+	setVisibility(map) {
+		if(this.hidden) {
+			this.hidden = false;			
+			return map;			
+		}
+		
+		this.hidden = true;
+		return null;
 	}
 
 	/**
@@ -34,7 +41,7 @@ export default class Marker {
 	 * 
 	 */
 	hide() {
-		this.visible = false;
+		this.hidden = true;
 	}
 
 	/**
@@ -42,14 +49,15 @@ export default class Marker {
 	 * 
 	 */
 	show() {
-		this.visible = true;
+		this.hidden = false;
 	}
 
 	/**
 	 * is this marker currently active
 	 * 
 	 */
-	isVisible() {
-		return this.visible;
+	isHidden() {
+		console.log("IS HIDDEN", this.hidden);
+		return this.hidden;
 	}
 }
