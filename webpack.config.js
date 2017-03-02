@@ -1,6 +1,7 @@
+var UglifyJsPlugin = require("webpack/lib/optimize/UglifyJsPlugin");
+
 module.exports = {
-    // where is the entry point to our app
-    //context: __dirname + '/public/assets/js/voice-verification',
+    // where is the entry point to our app    
 	entry: './src/app.js',
     output: {
         // where are the files we want to compile
@@ -23,5 +24,12 @@ module.exports = {
      // show colours in the console output
     stats: {
         colors: true
-    }
+    },
+    plugins: [
+        new UglifyJsPlugin({
+            compress: {
+                warnings: false
+            }
+        })
+    ]
 }
