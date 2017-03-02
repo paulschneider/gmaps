@@ -1,4 +1,20 @@
 {
+  "name": "gmaps",
+  "description": "*sass --watch sass:public/dist/css",
+  "version": "1.0.0",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/paulschneider/gmaps.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/paulschneider/gmaps/issues"
+  },
+  "homepage": "https://github.com/paulschneider/gmaps#readme",
   "private": true,
   "main": "app.js",
   "devDependencies": {
@@ -19,5 +35,5 @@
   },
   "dependencies": {
     "babel-polyfill": "^6.9.1"
-  }
+  },  
 }
