@@ -14,11 +14,11 @@
 
 ### Event listeners are added to the following classes when the app is fired up: ###
 
-* show / hide links = **.show-hide**
+* show / hide links = **.show-hide** [show hide map markers. By Default markers are displayed on start up]
 
-* age filter select = **.age-filter**
+* age filter select = **.age-filter** [filter the map markers by the age tag given to them]
 
-* Service type select = **.service-type-filter**
+* Service type select = **.service-type-filter** [filter the markers by the service typoe tag given to them]
 
 ### Data Structure Example - Services ###
 
