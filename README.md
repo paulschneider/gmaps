@@ -14,11 +14,11 @@
 
 ### Event listeners are added to the following classes when the app is fired up: ###
 
-* show / hide links = .show-hide
+* show / hide links = **bold**.show-hide**bold**
 
-* age filter select = .age-filter
+* age filter select = **bold**.age-filter**bold**
 
-* Service type select = .service-type-filter
+* Service type select = **bold**.service-type-filter**bold**
 
 ### Data Structure Example - Services ###
 
