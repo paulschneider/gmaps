@@ -30,7 +30,7 @@ export default class Map {
 				mapTypeId: this.config.mapType
 			});
 
-			this.loadKml(this.config.kml.start);
+			//this.loadKml(this.config.kml.start);
 			this.addMarkers(true);
 			this.compileAges();	
 			this.compileServiceTypes();		
