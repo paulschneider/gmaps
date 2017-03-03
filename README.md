@@ -18,7 +18,7 @@
 
 * age filter select = **.age-filter** [filter the map markers by the age tag given to them]
 
-* Service type select = **.service-type-filter** [filter the markers by the service typoe tag given to them]
+* Service type select = **.service-type-filter** [filter the markers by the service type tag given to them]
 
 ### Data Structure Example - Services ###
 
