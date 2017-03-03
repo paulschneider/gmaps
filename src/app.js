@@ -15,13 +15,23 @@ window.IconMap = function(services) {
 		},map);
     });
 
-	// add event listeners for the age filter
-    document.getElementById("age-filter").addEventListener("change", (e) => {
-    	map.filterByAge(e.target.value);
-    },map);
+    // grab all of the links to filter by age range
+	let ageLinks = document.getElementsByClassName("age-link");
 
-    // add event listeners for the service type filter
-    document.getElementById("service-type-filter").addEventListener("change", (e) => {
-    	map.filterByType(e.target.value);
-    },map);
+	// add event listeners to each of the hospital toggles
+	Array.from(ageLinks).forEach((link) => {		
+		link.addEventListener('click', (e) => {
+			map.filterByAge(e);
+		},map);
+    });
+
+    // grab all of the links to filter by service typ
+	let serviceLinks = document.getElementsByClassName("service-type");
+
+	// add event listeners to each of the links
+	Array.from(serviceLinks).forEach((link) => {		
+		link.addEventListener('click', (e) => {
+			map.filterByType(e);
+		},map);
+    });
 }

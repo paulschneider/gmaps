@@ -11,71 +11,54 @@
 		
 		<p>
 			<label>Filter by age</label>
-			<select id="age-filter" name="ages">
-				<option value="">All age groups</option>
-				<option value="youth">Youth 16 to 25</option>
-				<option value="adult">Adult 25 to 55</option>
-				<option value="senior">Other adult 55+</option>
-			</select>
+			<span id="selected-age">All age groups</span>
+			<ul id="age-filter">
+				<li><a href="#" class="age-link" data-value="">All age groups</a></li>
+				<li><a href="#" class="age-link" data-value="14">Youth 16 to 25</a></li>
+				<li><a href="#" class="age-link" data-value="15">Adult 25 to 55</a></li>
+				<li><a href="#" class="age-link" data-value="16">Other adult 55+</a></li>
+			</ul>
 		</p>
 	
 		<p>
 			<label>Filter by service type</label>
-			<select id="service-type-filter" name="service-types">
-				<option value="">All service types</option>
-				<option value="inpatient-unit">Inpatient Unit (IPU)</option>
-				<option value="residential">Residential</option>
-				<option value="community-care">Community Care Unit (CCU)</option>
-				<option value="prevention-recovery">Prevention and Recovery Care (PARC)</option>
-				<option value="community-team">Community Team</option>
-				<option value="general-admin-queries">General Administration Queries</option>
-				<option value="specialist-service">Specialist Service</option>
-				<option value="emergency-mental-health">Emergency Mental Health (EMH)</option>
-			</select>
+			<span id="selected-service">All service types</span>
+			<ul id="age-filter">			
+				<li><a href="#" class="service-type" data-value="">All service types</a></li>
+				<li><a href="#" class="service-type" data-value="17">Inpatient Unit (IPU)</a></li>
+				<li><a href="#" class="service-type" data-value="18">Residential</a></li>
+				<li><a href="#" class="service-type" data-value="19">Community Care Unit (CCU)</a></li>
+				<li><a href="#" class="service-type" data-value="20">Prevention and Recovery Care (PARC)</a></li>
+				<li><a href="#" class="service-type" data-value="21">Community Team</a></li>
+				<li><a href="#" class="service-type" data-value="22">General Administration Queries</a></li>
+				<li><a href="#" class="service-type" data-value="23">Specialist Service</a></li>
+				<li><a href="#" class="service-type" data-value="24">Emergency Mental Health (EMH)</a></li>
+			</ul>
 		</p>
-
-		<ul>
-			<li>
-				<div class="service">
-					<h3>The Northern Hospital</h3>
-					185 Cooper St, <br /> 
-					Epping <br /> 
-					VIC<br /> 
-					3076
-					<p>
-						<a class="show-hide" href="#" data-hospital-id="1">Show on Map</a>
-					</p>	
-				</div>
-			</li>
-			<li>
-				<div class="service">
-					<h3>The Royal Melbourne Hospital</h3>
-					300 Grattan St, <br /> 
-					Parkville <br /> 
-					VIC<br /> 
-					3050
-					<p>
-						<a class="show-hide" href="#" data-hospital-id="2">Show on Map</a>
-					</p>	
-				</div>
-			</li>
-			<li>
-				<div class="service">
-					<h3>Werribee Mercy Hospital</h3>
-					300-310 Princes Hwy, <br /> 
-					Werribee <br /> 
-					VIC<br /> 
-					3030
-					<p>
-						<a class="show-hide" href="#" data-hospital-id="3">Show on Map</a>
-					</p>	
-				</div>
-			</li>			
-		</ul>
 
 		<script src="./dist/js/maps.bundle.js"></script>    
 		<script type="text/javascript">
-			new IconMap({});
+			new IconMap([
+				{
+					"id":10,
+					"name":"Function Centre",
+					"location":{
+						"lat":-37.7987349,
+						"lng":144.9563131
+					},
+					"ages":["14"],
+					"services":["18"]},
+    			{
+    				"id":22,
+    				"name":"Icon Inc",
+    				"location": {
+    					"lat":-37.8316792,
+    					"lng":144.9924757
+    				},
+    				"ages":["15"],
+    				"services":["17"]
+    			}
+    		]);
 		</script>
 	</body>
 </html>

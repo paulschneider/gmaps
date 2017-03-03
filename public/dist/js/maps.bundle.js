@@ -68,15 +68,25 @@
 			}, map);
 		});
 
-		// add event listeners for the age filter
-		document.getElementById("age-filter").addEventListener("change", function (e) {
-			map.filterByAge(e.target.value);
-		}, map);
+		// grab all of the links to filter by age range
+		var ageLinks = document.getElementsByClassName("age-link");
 
-		// add event listeners for the service type filter
-		document.getElementById("service-type-filter").addEventListener("change", function (e) {
-			map.filterByType(e.target.value);
-		}, map);
+		// add event listeners to each of the hospital toggles
+		Array.from(ageLinks).forEach(function (link) {
+			link.addEventListener('click', function (e) {
+				map.filterByAge(e);
+			}, map);
+		});
+
+		// grab all of the links to filter by service typ
+		var serviceLinks = document.getElementsByClassName("service-type");
+
+		// add event listeners to each of the links
+		Array.from(serviceLinks).forEach(function (link) {
+			link.addEventListener('click', function (e) {
+				map.filterByType(e);
+			}, map);
+		});
 	};
 
 /***/ },
@@ -142,7 +152,7 @@
 						mapTypeId: _this.config.mapType
 					});
 
-					_this.loadKml(_this.config.kml.start);
+					//this.loadKml(this.config.kml.start);
 					_this.addMarkers(true);
 					_this.compileAges();
 					_this.compileServiceTypes();
@@ -258,8 +268,11 @@
 
 		}, {
 			key: "filterByAge",
-			value: function filterByAge(selected) {
-				this.addFilter("ageFilter", selected).apply();
+			value: function filterByAge(e) {
+				document.getElementById("selected-age").innerHTML = e.target.innerHTML;
+				this._setActiveClass(e);
+
+				this.addFilter("ageFilter", e.target.dataset.value).apply();
 			}
 
 			/**
@@ -269,8 +282,29 @@
 
 		}, {
 			key: "filterByType",
-			value: function filterByType(selected) {
-				this.addFilter("typeFilter", selected).apply();
+			value: function filterByType(e) {
+				document.getElementById("selected-service").innerHTML = e.target.innerHTML;
+				this._setActiveClass(e);
+
+				this.addFilter("typeFilter", e.target.dataset.value).apply();
+			}
+
+			/**
+	   * set the selected class as active
+	   *
+	   */
+
+		}, {
+			key: "_setActiveClass",
+			value: function _setActiveClass(e) {
+				var className = e.target.className;
+				var els = document.getElementsByClassName(className);
+
+				Array.from(els).forEach(function (el) {
+					el.parentElement.classList.remove("active");
+				});
+
+				e.target.parentElement.classList.add("active");
 			}
 
 			/**
@@ -283,7 +317,6 @@
 			value: function apply() {
 				var _this7 = this;
 
-				console.log(JSON.stringify(this.filters));
 				this.filters.forEach(function (filter) {
 					_this7[filter.method](filter.value);
 				});
@@ -307,9 +340,10 @@
 					if (!selected) {
 						return _this8.showAllMarkers();
 					}
+					console.log(_this8.ages);
 
 					var _loop = function _loop(age) {
-						if (age === selected) {
+						if (age == selected) {
 							// filter the ages to just show the ones that meet the chosen
 							// filter option
 							var filtered = markers.filter(function (marker) {
@@ -348,7 +382,7 @@
 					}
 
 					var _loop2 = function _loop2(serviceType) {
-						if (serviceType === selected) {
+						if (serviceType == selected) {
 							// filter the service types to just show the ones that meet 
 							// the selected value
 							var filtered = markers.filter(function (marker) {

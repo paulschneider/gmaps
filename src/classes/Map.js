@@ -118,16 +118,37 @@ export default class Map {
 	 * filter the services by age selection
 	 * 
 	 */
-	filterByAge(selected) {
-		this.addFilter("ageFilter", selected).apply();	
-	}
+	filterByAge(e) {		
+		document.getElementById("selected-age").innerHTML = e.target.innerHTML;
+		this._setActiveClass(e);
+		
+		this.addFilter("ageFilter", e.target.dataset.value).apply();	
+	}	
 
 	/**
 	 * filter the list of services by service type
 	 *
 	 */
-	filterByType(selected) {
-		this.addFilter("typeFilter", selected).apply();	
+	filterByType(e) {
+		document.getElementById("selected-service").innerHTML = e.target.innerHTML;		
+		this._setActiveClass(e);
+
+		this.addFilter("typeFilter", e.target.dataset.value).apply();	
+	}
+
+	/**
+	 * set the selected class as active
+	 *
+	 */
+	_setActiveClass(e) {
+		let className = e.target.className;
+		let els = document.getElementsByClassName(className)
+
+		Array.from(els).forEach((el) => {
+			el.parentElement.classList.remove("active");
+		});
+
+		e.target.parentElement.classList.add("active");
 	}
 
 	/**
@@ -135,7 +156,6 @@ export default class Map {
 	 *
 	 */
 	apply() {	
-		console.log(JSON.stringify(this.filters));
 		this.filters.forEach((filter) => {
 			this[filter.method](filter.value);
 		});
@@ -146,7 +166,6 @@ export default class Map {
 	 * 
 	 */
 	ageFilter(selected) {	
-
 		this.showAllMarkers();
 
 		new Promise((resolve, reject) => {
@@ -155,9 +174,9 @@ export default class Map {
 			if(!selected) {
 				return this.showAllMarkers();
 			}
-
-			for(let age in this.ages) {
-				if(age === selected) {
+			console.log(this.ages);
+			for(let age in this.ages) {				
+				if(age == selected) {
 					// filter the ages to just show the ones that meet the chosen
 					// filter option
 					let filtered = markers.filter((marker) => {
@@ -184,7 +203,7 @@ export default class Map {
 			}
 
 			for(let serviceType in this.serviceTypes) {
-				if(serviceType === selected) {
+				if(serviceType == selected) {
 					// filter the service types to just show the ones that meet 
 					// the selected value
 					let filtered = markers.filter((marker) => {
