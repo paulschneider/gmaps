@@ -1,8 +1,8 @@
 import Map from "./classes/Map";
 import {Setup as Config} from "./config/Setup";
 
-if(document.getElementById("map")) {	
-	let map = new Map(Config);
+window.IconMap = function(services) {
+	let map = new Map(Config, services);
 	map.build();
 
 	// grab all of the links to show/hide the hospitals
@@ -15,10 +15,12 @@ if(document.getElementById("map")) {
 		},map);
     });
 
+	// add event listeners for the age filter
     document.getElementById("age-filter").addEventListener("change", (e) => {
     	map.filterByAge(e.target.value);
     },map);
 
+    // add event listeners for the service type filter
     document.getElementById("service-type-filter").addEventListener("change", (e) => {
     	map.filterByType(e.target.value);
     },map);

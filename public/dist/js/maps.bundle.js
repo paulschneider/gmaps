@@ -1,1 +1,826 @@
-!function(e){function t(i){if(n[i])return n[i].exports;var r=n[i]={exports:{},id:i,loaded:!1};return e[i].call(r.exports,r,r.exports,t),r.loaded=!0,r.exports}var n={};return t.m=e,t.c=n,t.p="",t(0)}([function(e,t,n){"use strict";function i(e){return e&&e.__esModule?e:{default:e}}var r=n(1),o=i(r),a=n(5);if(document.getElementById("map")){var l=new o.default(a.Setup);l.build();var s=document.getElementsByClassName("show-hide");Array.from(s).forEach(function(e){e.addEventListener("click",function(e){l.showMarker(e.target.dataset.hospitalId)},l)}),document.getElementById("age-filter").addEventListener("change",function(e){l.filterByAge(e.target.value)},l),document.getElementById("service-type-filter").addEventListener("change",function(e){l.filterByType(e.target.value)},l)}},function(e,t,n){"use strict";function i(e){return e&&e.__esModule?e:{default:e}}function r(e,t){if(!(e instanceof t))throw new TypeError("Cannot call a class as a function")}Object.defineProperty(t,"__esModule",{value:!0});var o="function"==typeof Symbol&&"symbol"==typeof Symbol.iterator?function(e){return typeof e}:function(e){return e&&"function"==typeof Symbol&&e.constructor===Symbol&&e!==Symbol.prototype?"symbol":typeof e},a=function(){function e(e,t){for(var n=0;n<t.length;n++){var i=t[n];i.enumerable=i.enumerable||!1,i.configurable=!0,"value"in i&&(i.writable=!0),Object.defineProperty(e,i.key,i)}}return function(t,n,i){return n&&e(t.prototype,n),i&&e(t,i),t}}(),l=n(2),s=i(l),u=n(3),c=i(u),f=n(4),d=function(){function e(t){r(this,e),this.config=t,this.services=f.Services,this.kmlLayer=null,this.markers=[],this.map=null,s.default.KEY=this.config.apiKey,this.ages={},this.serviceTypes={},this.filters=[]}return a(e,[{key:"build",value:function(){var e=this;s.default.load(function(t){e.map=new t.maps.Map(document.querySelector(e.config.selector),{center:new t.maps.LatLng(e.config.centreLat,e.config.centreLang),zoom:e.config.startZoom,mapTypeId:e.config.mapType}),e.loadKml(e.config.kml.start),e.addMarkers(!0),e.compileAges(),e.compileServiceTypes()})}},{key:"loadKml",value:function(e){var t=this;s.default.load(function(n){t.kmlLayer=new n.maps.KmlLayer({url:e}),t.kmlLayer.setMap(t.map)})}},{key:"addMarkers",value:function(e){var t=this;this.services.forEach(function(n){var i=new c.default(n);t.markers.push(i),e&&t.showMarker(i.id)})}},{key:"showMarker",value:function(e){var t=this;this.markers.forEach(function(n){n.id===parseInt(e)&&n.pin.setMap(n.setVisibility(t.map))},e)}},{key:"compileAges",value:function(){var e=this;this.markers.forEach(function(t){for(var n in t.ages)n=t.ages[n],e.ages[n]||(e.ages[n]=[]),e.ages[n].push(t)})}},{key:"compileServiceTypes",value:function(){var e=this;this.markers.forEach(function(t){for(var n in t.services){var i=t.services[n];e.serviceTypes[i]||(e.serviceTypes[i]=[]),e.serviceTypes[i].push(t)}})}},{key:"filterByAge",value:function(e){this.addFilter("ageFilter",e).apply()}},{key:"filterByType",value:function(e){this.addFilter("typeFilter",e).apply()}},{key:"apply",value:function(){var e=this;console.log(JSON.stringify(this.filters)),this.filters.forEach(function(t){e[t.method](t.value)})}},{key:"ageFilter",value:function(e){var t=this;this.showAllMarkers(),new Promise(function(e,n){e(t.getActiveMarkers())}).then(function(n){if(!e)return t.showAllMarkers();var i=function(i){if(i===e){var r=n.filter(function(e){return t.ages[i].includes(e)});return{v:t.showMarkers(r)}}};for(var r in t.ages){var a=i(r);if("object"===("undefined"==typeof a?"undefined":o(a)))return a.v}})}},{key:"typeFilter",value:function(e){var t=this;new Promise(function(e,n){e(t.getActiveMarkers())}).then(function(n){if(!e)return t.showAllMarkers();var i=function(i){if(i===e){var r=n.filter(function(e){return t.serviceTypes[i].includes(e)});return{v:t.showMarkers(r)}}};for(var r in t.serviceTypes){var a=i(r);if("object"===("undefined"==typeof a?"undefined":o(a)))return a.v}})}},{key:"showMarkers",value:function(e){var t=this;this.hideAllMarkers(),e.forEach(function(e){t.showMarker(e.id)})}},{key:"showAllMarkers",value:function(){var e=this;this.markers.forEach(function(t){t.pin.setMap(e.map),t.show()})}},{key:"hideAllMarkers",value:function(){this.markers.forEach(function(e){e.pin.setMap(null),e.hide()})}},{key:"addFilter",value:function(e,t){return this.applyFilter(e,t),this}},{key:"applyFilter",value:function(e,t){for(var n in this.filters)if(this.filters[n].method===e)return this.filters[n].value=t;return this.filters.push({method:e,value:t})}},{key:"getActiveMarkers",value:function(){var e=[];return this.markers.forEach(function(t){t.isHidden()||e.push(t)}),e}}]),e}();t.default=d},function(e,t,n){var i,r;!function(o,a){if(null===o)throw new Error("Google-maps package can be used only in browser");i=a,r="function"==typeof i?i.call(t,n,t,e):i,!(void 0!==r&&(e.exports=r))}("undefined"!=typeof window?window:null,function(){"use strict";var e="3.18",t=null,n=null,i=!1,r=[],o=[],a=null,l={};l.URL="https://maps.googleapis.com/maps/api/js",l.KEY=null,l.LIBRARIES=[],l.CLIENT=null,l.CHANNEL=null,l.LANGUAGE=null,l.REGION=null,l.VERSION=e,l.WINDOW_CALLBACK_NAME="__google_maps_api_provider_initializator__",l._googleMockApiObject={},l.load=function(e){null===n?i===!0?e&&r.push(e):(i=!0,window[l.WINDOW_CALLBACK_NAME]=function(){s(e)},l.createLoader()):e&&e(n)},l.createLoader=function(){t=document.createElement("script"),t.type="text/javascript",t.src=l.createUrl(),document.body.appendChild(t)},l.isLoaded=function(){return null!==n},l.createUrl=function(){var e=l.URL;return e+="?callback="+l.WINDOW_CALLBACK_NAME,l.KEY&&(e+="&key="+l.KEY),l.LIBRARIES.length>0&&(e+="&libraries="+l.LIBRARIES.join(",")),l.CLIENT&&(e+="&client="+l.CLIENT+"&v="+l.VERSION),l.CHANNEL&&(e+="&channel="+l.CHANNEL),l.LANGUAGE&&(e+="&language="+l.LANGUAGE),l.REGION&&(e+="&region="+l.REGION),e},l.release=function(s){var u=function(){l.KEY=null,l.LIBRARIES=[],l.CLIENT=null,l.CHANNEL=null,l.LANGUAGE=null,l.REGION=null,l.VERSION=e,n=null,i=!1,r=[],o=[],"undefined"!=typeof window.google&&delete window.google,"undefined"!=typeof window[l.WINDOW_CALLBACK_NAME]&&delete window[l.WINDOW_CALLBACK_NAME],null!==a&&(l.createLoader=a,a=null),null!==t&&(t.parentElement.removeChild(t),t=null),s&&s()};i?l.load(function(){u()}):u()},l.onLoad=function(e){o.push(e)},l.makeMock=function(){a=l.createLoader,l.createLoader=function(){window.google=l._googleMockApiObject,window[l.WINDOW_CALLBACK_NAME]()}};var s=function(e){var t;for(i=!1,null===n&&(n=window.google),t=0;t<o.length;t++)o[t](n);for(e&&e(n),t=0;t<r.length;t++)r[t](n);r=[]};return l})},function(e,t,n){"use strict";function i(e){return e&&e.__esModule?e:{default:e}}function r(e,t){if(!(e instanceof t))throw new TypeError("Cannot call a class as a function")}Object.defineProperty(t,"__esModule",{value:!0});var o=function(){function e(e,t){for(var n=0;n<t.length;n++){var i=t[n];i.enumerable=i.enumerable||!1,i.configurable=!0,"value"in i&&(i.writable=!0),Object.defineProperty(e,i.key,i)}}return function(t,n,i){return n&&e(t.prototype,n),i&&e(t,i),t}}(),a=n(2),l=i(a),s=function(){function e(t){var n=this;return r(this,e),this.pin=null,this.id=t.id,this.hidden=!0,this.ages=t.ages,this.services=t.services,l.default.load(function(e){n.pin=new e.maps.Marker({position:{lat:t.location.lat,lng:t.location.lng}})}),this}return o(e,[{key:"setVisibility",value:function(e){return this.hidden?(this.hidden=!1,e):(this.hidden=!0,null)}},{key:"hide",value:function(){this.hidden=!0}},{key:"show",value:function(){this.hidden=!1}},{key:"isHidden",value:function(){return console.log("IS HIDDEN",this.hidden),this.hidden}}]),e}();t.default=s},function(e,t){"use strict";Object.defineProperty(t,"__esModule",{value:!0});t.Services=Object.freeze([{id:1,location:{lat:-37.6527073,lng:145.0120898},ages:["youth","adult"],services:["inpatient-unit","residential","community-care","community-team"]},{id:2,location:{lat:-37.7987306,lng:144.9541191},ages:["youth"],services:["prevention-recovery","inpatient-unit","general-admin-queries","emergency-mental-health"]},{id:3,location:{lat:-37.88719,lng:144.6965135},ages:["senior"],services:["community-team","specialist-service"]}])},function(e,t){"use strict";Object.defineProperty(t,"__esModule",{value:!0});t.Setup=Object.freeze({apiKey:"AIzaSyCbDyxAp1SlhHAfVJGH3F1m4ZX43tQhXj4",selector:"#map",centreLat:-37.8055124,centreLang:144.9746755,startZoom:14,mapType:"roadmap",kml:{start:"https://raw.githubusercontent.com/paulschneider/kml-test/master/source-4.kml?123132654",replacement:"https://raw.githubusercontent.com/paulschneider/kml-test/master/source-5.kml?123132654"}})}]);
+/******/ (function(modules) { // webpackBootstrap
+/******/ 	// The module cache
+/******/ 	var installedModules = {};
+
+/******/ 	// The require function
+/******/ 	function __webpack_require__(moduleId) {
+
+/******/ 		// Check if module is in cache
+/******/ 		if(installedModules[moduleId])
+/******/ 			return installedModules[moduleId].exports;
+
+/******/ 		// Create a new module (and put it into the cache)
+/******/ 		var module = installedModules[moduleId] = {
+/******/ 			exports: {},
+/******/ 			id: moduleId,
+/******/ 			loaded: false
+/******/ 		};
+
+/******/ 		// Execute the module function
+/******/ 		modules[moduleId].call(module.exports, module, module.exports, __webpack_require__);
+
+/******/ 		// Flag the module as loaded
+/******/ 		module.loaded = true;
+
+/******/ 		// Return the exports of the module
+/******/ 		return module.exports;
+/******/ 	}
+
+
+/******/ 	// expose the modules object (__webpack_modules__)
+/******/ 	__webpack_require__.m = modules;
+
+/******/ 	// expose the module cache
+/******/ 	__webpack_require__.c = installedModules;
+
+/******/ 	// __webpack_public_path__
+/******/ 	__webpack_require__.p = "";
+
+/******/ 	// Load entry module and return exports
+/******/ 	return __webpack_require__(0);
+/******/ })
+/************************************************************************/
+/******/ ([
+/* 0 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+
+	var _Map = __webpack_require__(1);
+
+	var _Map2 = _interopRequireDefault(_Map);
+
+	var _Setup = __webpack_require__(4);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	window.IconMap = function (services) {
+		var map = new _Map2.default(_Setup.Setup, services);
+		map.build();
+
+		// grab all of the links to show/hide the hospitals
+		var classname = document.getElementsByClassName("show-hide");
+
+		// add event listeners to each of the hospital toggles
+		Array.from(classname).forEach(function (element) {
+			element.addEventListener('click', function (e) {
+				map.showMarker(e.target.dataset.hospitalId);
+			}, map);
+		});
+
+		// add event listeners for the age filter
+		document.getElementById("age-filter").addEventListener("change", function (e) {
+			map.filterByAge(e.target.value);
+		}, map);
+
+		// add event listeners for the service type filter
+		document.getElementById("service-type-filter").addEventListener("change", function (e) {
+			map.filterByType(e.target.value);
+		}, map);
+	};
+
+/***/ },
+/* 1 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+
+	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _googleMaps = __webpack_require__(2);
+
+	var _googleMaps2 = _interopRequireDefault(_googleMaps);
+
+	var _Marker = __webpack_require__(3);
+
+	var _Marker2 = _interopRequireDefault(_Marker);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	var Map = function () {
+		/**
+	  * class constructor
+	  * 
+	  */
+		function Map(config, services) {
+			_classCallCheck(this, Map);
+
+			this.config = config;
+			this.services = services;
+			this.kmlLayer = null;
+			this.markers = [];
+			this.map = null;
+			_googleMaps2.default.KEY = this.config.apiKey;
+			this.ages = {};
+			this.serviceTypes = {};
+			this.filters = [];
+		}
+
+		/**
+	  * build the map and all associated features and data
+	  * 
+	  */
+
+
+		_createClass(Map, [{
+			key: "build",
+			value: function build() {
+				var _this = this;
+
+				_googleMaps2.default.load(function (google) {
+					_this.map = new google.maps.Map(document.querySelector(_this.config.selector), {
+						center: new google.maps.LatLng(_this.config.centreLat, _this.config.centreLang),
+						zoom: _this.config.startZoom,
+						mapTypeId: _this.config.mapType
+					});
+
+					_this.loadKml(_this.config.kml.start);
+					_this.addMarkers(true);
+					_this.compileAges();
+					_this.compileServiceTypes();
+				});
+			}
+
+			/**
+	   * load up the KML overlay
+	   * 
+	   */
+
+		}, {
+			key: "loadKml",
+			value: function loadKml(src) {
+				var _this2 = this;
+
+				_googleMaps2.default.load(function (google) {
+					_this2.kmlLayer = new google.maps.KmlLayer({
+						url: src
+					});
+
+					_this2.kmlLayer.setMap(_this2.map);
+				});
+			}
+
+			/**
+	   * add all of the service markers to the map
+	   * 
+	   */
+
+		}, {
+			key: "addMarkers",
+			value: function addMarkers(displayOnMap) {
+				var _this3 = this;
+
+				// iterate over the services and put them on the map
+				this.services.forEach(function (service) {
+					var marker = new _Marker2.default(service);
+					_this3.markers.push(marker);
+
+					if (displayOnMap) {
+						_this3.showMarker(marker.id);
+					}
+				});
+			}
+
+			/**
+	   * show a map marker
+	   * 
+	   */
+
+		}, {
+			key: "showMarker",
+			value: function showMarker(markerId) {
+				var _this4 = this;
+
+				this.markers.forEach(function (marker) {
+					if (marker.id === parseInt(markerId)) {
+						marker.pin.setMap(marker.setVisibility(_this4.map));
+					}
+				}, markerId);
+			}
+
+			/**
+	   * convert the service list into a list of ages Vs services
+	   *
+	   */
+
+		}, {
+			key: "compileAges",
+			value: function compileAges() {
+				var _this5 = this;
+
+				this.markers.forEach(function (service) {
+					for (var age in service.ages) {
+						age = service.ages[age];
+
+						if (!_this5.ages[age]) {
+							_this5.ages[age] = [];
+						}
+
+						_this5.ages[age].push(service);
+					}
+				});
+			}
+			/**
+	   * convert the service list into a list of service types Vs services
+	   * 
+	   */
+
+		}, {
+			key: "compileServiceTypes",
+			value: function compileServiceTypes() {
+				var _this6 = this;
+
+				this.markers.forEach(function (service) {
+					for (var index in service.services) {
+						var serviceType = service.services[index];
+
+						if (!_this6.serviceTypes[serviceType]) {
+							_this6.serviceTypes[serviceType] = [];
+						}
+
+						_this6.serviceTypes[serviceType].push(service);
+					}
+				});
+			}
+
+			/**
+	   * filter the services by age selection
+	   * 
+	   */
+
+		}, {
+			key: "filterByAge",
+			value: function filterByAge(selected) {
+				this.addFilter("ageFilter", selected).apply();
+			}
+
+			/**
+	   * filter the list of services by service type
+	   *
+	   */
+
+		}, {
+			key: "filterByType",
+			value: function filterByType(selected) {
+				this.addFilter("typeFilter", selected).apply();
+			}
+
+			/**
+	   * iterate over the selected filters and apply them
+	   *
+	   */
+
+		}, {
+			key: "apply",
+			value: function apply() {
+				var _this7 = this;
+
+				console.log(JSON.stringify(this.filters));
+				this.filters.forEach(function (filter) {
+					_this7[filter.method](filter.value);
+				});
+			}
+
+			/**
+	   * apply out the age filter
+	   * 
+	   */
+
+		}, {
+			key: "ageFilter",
+			value: function ageFilter(selected) {
+				var _this8 = this;
+
+				this.showAllMarkers();
+
+				new Promise(function (resolve, reject) {
+					resolve(_this8.getActiveMarkers());
+				}).then(function (markers) {
+					if (!selected) {
+						return _this8.showAllMarkers();
+					}
+
+					var _loop = function _loop(age) {
+						if (age === selected) {
+							// filter the ages to just show the ones that meet the chosen
+							// filter option
+							var filtered = markers.filter(function (marker) {
+								return _this8.ages[age].includes(marker);
+							});
+
+							return {
+								v: _this8.showMarkers(filtered)
+							};
+						}
+					};
+
+					for (var age in _this8.ages) {
+						var _ret = _loop(age);
+
+						if ((typeof _ret === "undefined" ? "undefined" : _typeof(_ret)) === "object") return _ret.v;
+					}
+				});
+			}
+
+			/**
+	   * apply the service type filter
+	   * 
+	   */
+
+		}, {
+			key: "typeFilter",
+			value: function typeFilter(selected) {
+				var _this9 = this;
+
+				new Promise(function (resolve, reject) {
+					resolve(_this9.getActiveMarkers());
+				}).then(function (markers) {
+					if (!selected) {
+						return _this9.showAllMarkers();
+					}
+
+					var _loop2 = function _loop2(serviceType) {
+						if (serviceType === selected) {
+							// filter the service types to just show the ones that meet 
+							// the selected value
+							var filtered = markers.filter(function (marker) {
+								return _this9.serviceTypes[serviceType].includes(marker);
+							});
+
+							return {
+								v: _this9.showMarkers(filtered)
+							};
+						}
+					};
+
+					for (var serviceType in _this9.serviceTypes) {
+						var _ret2 = _loop2(serviceType);
+
+						if ((typeof _ret2 === "undefined" ? "undefined" : _typeof(_ret2)) === "object") return _ret2.v;
+					}
+				});
+			}
+
+			/**
+	   * show all of the markers in a provided list
+	   * 
+	   */
+
+		}, {
+			key: "showMarkers",
+			value: function showMarkers(markers) {
+				var _this10 = this;
+
+				this.hideAllMarkers();
+
+				markers.forEach(function (marker) {
+					_this10.showMarker(marker.id);
+				});
+			}
+
+			/**
+	   * show all of the markers regardless of previous selection
+	   * 
+	   */
+
+		}, {
+			key: "showAllMarkers",
+			value: function showAllMarkers() {
+				var _this11 = this;
+
+				this.markers.forEach(function (marker) {
+					marker.pin.setMap(_this11.map);
+					marker.show();
+				});
+			}
+
+			/**
+	   * hide all of the markers regardless of previous selection
+	   * 
+	   */
+
+		}, {
+			key: "hideAllMarkers",
+			value: function hideAllMarkers() {
+				this.markers.forEach(function (marker) {
+					marker.pin.setMap(null);
+					marker.hide();
+				});
+			}
+
+			/**
+	   * add the name of a filter function to the map
+	   * 
+	   */
+
+		}, {
+			key: "addFilter",
+			value: function addFilter(filter, option) {
+				this.applyFilter(filter, option);
+
+				return this;
+			}
+
+			/**
+	   * update an existing filter with the newly selected value
+	   *
+	   */
+
+		}, {
+			key: "applyFilter",
+			value: function applyFilter(filter, option) {
+				for (var active in this.filters) {
+					if (this.filters[active].method === filter) {
+						return this.filters[active].value = option;
+					}
+				}
+
+				return this.filters.push({ method: filter, value: option });
+			}
+
+			/**
+	   * retrieve all currently active markers
+	   * 
+	   */
+
+		}, {
+			key: "getActiveMarkers",
+			value: function getActiveMarkers() {
+				var activeMarkers = [];
+
+				this.markers.forEach(function (marker) {
+					if (!marker.isHidden()) {
+						activeMarkers.push(marker);
+					}
+				});
+
+				return activeMarkers;
+			}
+		}]);
+
+		return Map;
+	}();
+
+	exports.default = Map;
+
+/***/ },
+/* 2 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_RESULT__;(function(root, factory) {
+
+		if (root === null) {
+			throw new Error('Google-maps package can be used only in browser');
+		}
+
+		if (true) {
+			!(__WEBPACK_AMD_DEFINE_FACTORY__ = (factory), __WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ? (__WEBPACK_AMD_DEFINE_FACTORY__.call(exports, __webpack_require__, exports, module)) : __WEBPACK_AMD_DEFINE_FACTORY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+		} else if (typeof exports === 'object') {
+			module.exports = factory();
+		} else {
+			root.GoogleMapsLoader = factory();
+		}
+
+	})(typeof window !== 'undefined' ? window : null, function() {
+
+
+		'use strict';
+
+
+		var googleVersion = '3.18';
+
+		var script = null;
+
+		var google = null;
+
+		var loading = false;
+
+		var callbacks = [];
+
+		var onLoadEvents = [];
+
+		var originalCreateLoaderMethod = null;
+
+
+		var GoogleMapsLoader = {};
+
+
+		GoogleMapsLoader.URL = 'https://maps.googleapis.com/maps/api/js';
+
+		GoogleMapsLoader.KEY = null;
+
+		GoogleMapsLoader.LIBRARIES = [];
+
+		GoogleMapsLoader.CLIENT = null;
+
+		GoogleMapsLoader.CHANNEL = null;
+
+		GoogleMapsLoader.LANGUAGE = null;
+
+		GoogleMapsLoader.REGION = null;
+
+		GoogleMapsLoader.VERSION = googleVersion;
+
+		GoogleMapsLoader.WINDOW_CALLBACK_NAME = '__google_maps_api_provider_initializator__';
+
+
+		GoogleMapsLoader._googleMockApiObject = {};
+
+
+		GoogleMapsLoader.load = function(fn) {
+			if (google === null) {
+				if (loading === true) {
+					if (fn) {
+						callbacks.push(fn);
+					}
+				} else {
+					loading = true;
+
+					window[GoogleMapsLoader.WINDOW_CALLBACK_NAME] = function() {
+						ready(fn);
+					};
+
+					GoogleMapsLoader.createLoader();
+				}
+			} else if (fn) {
+				fn(google);
+			}
+		};
+
+
+		GoogleMapsLoader.createLoader = function() {
+			script = document.createElement('script');
+			script.type = 'text/javascript';
+			script.src = GoogleMapsLoader.createUrl();
+
+			document.body.appendChild(script);
+		};
+
+
+		GoogleMapsLoader.isLoaded = function() {
+			return google !== null;
+		};
+
+
+		GoogleMapsLoader.createUrl = function() {
+			var url = GoogleMapsLoader.URL;
+
+			url += '?callback=' + GoogleMapsLoader.WINDOW_CALLBACK_NAME;
+
+			if (GoogleMapsLoader.KEY) {
+				url += '&key=' + GoogleMapsLoader.KEY;
+			}
+
+			if (GoogleMapsLoader.LIBRARIES.length > 0) {
+				url += '&libraries=' + GoogleMapsLoader.LIBRARIES.join(',');
+			}
+
+			if (GoogleMapsLoader.CLIENT) {
+				url += '&client=' + GoogleMapsLoader.CLIENT + '&v=' + GoogleMapsLoader.VERSION;
+			}
+
+			if (GoogleMapsLoader.CHANNEL) {
+				url += '&channel=' + GoogleMapsLoader.CHANNEL;
+			}
+
+			if (GoogleMapsLoader.LANGUAGE) {
+				url += '&language=' + GoogleMapsLoader.LANGUAGE;
+			}
+
+			if (GoogleMapsLoader.REGION) {
+				url += '&region=' + GoogleMapsLoader.REGION;
+			}
+
+			return url;
+		};
+
+
+		GoogleMapsLoader.release = function(fn) {
+			var release = function() {
+				GoogleMapsLoader.KEY = null;
+				GoogleMapsLoader.LIBRARIES = [];
+				GoogleMapsLoader.CLIENT = null;
+				GoogleMapsLoader.CHANNEL = null;
+				GoogleMapsLoader.LANGUAGE = null;
+				GoogleMapsLoader.REGION = null;
+				GoogleMapsLoader.VERSION = googleVersion;
+
+				google = null;
+				loading = false;
+				callbacks = [];
+				onLoadEvents = [];
+
+				if (typeof window.google !== 'undefined') {
+					delete window.google;
+				}
+
+				if (typeof window[GoogleMapsLoader.WINDOW_CALLBACK_NAME] !== 'undefined') {
+					delete window[GoogleMapsLoader.WINDOW_CALLBACK_NAME];
+				}
+
+				if (originalCreateLoaderMethod !== null) {
+					GoogleMapsLoader.createLoader = originalCreateLoaderMethod;
+					originalCreateLoaderMethod = null;
+				}
+
+				if (script !== null) {
+					script.parentElement.removeChild(script);
+					script = null;
+				}
+
+				if (fn) {
+					fn();
+				}
+			};
+
+			if (loading) {
+				GoogleMapsLoader.load(function() {
+					release();
+				});
+			} else {
+				release();
+			}
+		};
+
+
+		GoogleMapsLoader.onLoad = function(fn) {
+			onLoadEvents.push(fn);
+		};
+
+
+		GoogleMapsLoader.makeMock = function() {
+			originalCreateLoaderMethod = GoogleMapsLoader.createLoader;
+
+			GoogleMapsLoader.createLoader = function() {
+				window.google = GoogleMapsLoader._googleMockApiObject;
+				window[GoogleMapsLoader.WINDOW_CALLBACK_NAME]();
+			};
+		};
+
+
+		var ready = function(fn) {
+			var i;
+
+			loading = false;
+
+			if (google === null) {
+				google = window.google;
+			}
+
+			for (i = 0; i < onLoadEvents.length; i++) {
+				onLoadEvents[i](google);
+			}
+
+			if (fn) {
+				fn(google);
+			}
+
+			for (i = 0; i < callbacks.length; i++) {
+				callbacks[i](google);
+			}
+
+			callbacks = [];
+		};
+
+
+		return GoogleMapsLoader;
+
+	});
+
+
+/***/ },
+/* 3 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _googleMaps = __webpack_require__(2);
+
+	var _googleMaps2 = _interopRequireDefault(_googleMaps);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	var Marker = function () {
+
+		/**
+	  * class constructor
+	  * 
+	  */
+		function Marker(config) {
+			var _this = this;
+
+			_classCallCheck(this, Marker);
+
+			this.pin = null;
+			this.id = config.id;
+			this.hidden = true;
+			this.ages = config.ages;
+			this.services = config.services;
+
+			_googleMaps2.default.load(function (google) {
+				_this.pin = new google.maps.Marker({
+					position: { lat: config.location.lat, lng: config.location.lng }
+				});
+			});
+
+			return this;
+		}
+
+		/**
+	  * toggle the visibility flag of the marker
+	  * 
+	  */
+
+
+		_createClass(Marker, [{
+			key: "setVisibility",
+			value: function setVisibility(map) {
+				if (this.hidden) {
+					this.hidden = false;
+					return map;
+				}
+
+				this.hidden = true;
+				return null;
+			}
+
+			/**
+	   * set the visibility to hidden
+	   * 
+	   */
+
+		}, {
+			key: "hide",
+			value: function hide() {
+				this.hidden = true;
+			}
+
+			/**
+	   * set the visibility to visible
+	   * 
+	   */
+
+		}, {
+			key: "show",
+			value: function show() {
+				this.hidden = false;
+			}
+
+			/**
+	   * is this marker currently active
+	   * 
+	   */
+
+		}, {
+			key: "isHidden",
+			value: function isHidden() {
+				console.log("IS HIDDEN", this.hidden);
+				return this.hidden;
+			}
+		}]);
+
+		return Marker;
+	}();
+
+	exports.default = Marker;
+
+/***/ },
+/* 4 */
+/***/ function(module, exports) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+	var Setup = exports.Setup = Object.freeze({
+		apiKey: "AIzaSyCbDyxAp1SlhHAfVJGH3F1m4ZX43tQhXj4",
+		selector: "#map",
+		centreLat: -37.8055124,
+		centreLang: 144.9746755,
+		startZoom: 14,
+		mapType: "roadmap",
+		kml: {
+			start: 'https://raw.githubusercontent.com/paulschneider/kml-test/master/source-4.kml?123132654',
+			replacement: 'https://raw.githubusercontent.com/paulschneider/kml-test/master/source-5.kml?123132654'
+		}
+	});
+
+/***/ }
+/******/ ]);

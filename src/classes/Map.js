@@ -1,15 +1,14 @@
 import GoogleMaps from "google-maps";
 import Marker from "./Marker";
-import {Services} from "../config/Services";
 
 export default class Map {
 	/**
 	 * class constructor
 	 * 
 	 */
-	constructor(config) {
+	constructor(config, services) {
 		this.config 		= config;
-		this.services 		= Services;
+		this.services 		= services;
 		this.kmlLayer 		= null;
 		this.markers 		= [];
 		this.map 			= null;
