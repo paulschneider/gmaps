@@ -1,7 +1,7 @@
 {
   "name": "gmaps",
   "description": "*sass --watch sass:public/dist/css",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -23,9 +23,6 @@
     "babel-preset-es2015": "^6.9.0",
     "css-loader": "^0.23.1",
     "es6-promise": "3.1.2",
-    "eslint": "^3.2.2",
-    "eslint-config-airbnb": "^10.0.0",
-    "eslint-plugin-react": "^6.0.0",
     "google-maps": "^3.2.1",
     "googlemaps": "^1.12.0",
     "raw-loader": "^0.5.1",
