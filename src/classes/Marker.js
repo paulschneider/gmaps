@@ -57,7 +57,6 @@ export default class Marker {
 	 * 
 	 */
 	isHidden() {
-		console.log("IS HIDDEN", this.hidden);
 		return this.hidden;
 	}
 }

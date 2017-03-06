@@ -26,10 +26,10 @@ module.exports = {
         colors: true
     },
     plugins: [
-        new UglifyJsPlugin({
-            compress: {
-                warnings: false
-            }
-        })
+        // new UglifyJsPlugin({
+        //     compress: {
+        //         warnings: false
+        //     }
+        // })
     ]
 }

@@ -11,18 +11,22 @@ window.IconMap = function(services) {
 	// add event listeners to each of the hospital toggles
 	Array.from(classname).forEach((element) => {
 		element.addEventListener('click', (e) => {
-			map.showMarker(e.target.dataset.hospitalId);
-		},map);
+			e.preventDefault();
+			
+			map.toggle(e.target.dataset.hospitalId);
+		}, map);
     });
 
     // grab all of the links to filter by age range
 	let ageLinks = document.getElementsByClassName("age-link");
 
 	// add event listeners to each of the hospital toggles
-	Array.from(ageLinks).forEach((link) => {		
+	Array.from(ageLinks).forEach((link) => {				
 		link.addEventListener('click', (e) => {
+			e.preventDefault();
+
 			map.filterByAge(e);
-		},map);
+		}, map);
     });
 
     // grab all of the links to filter by service typ
@@ -31,7 +35,9 @@ window.IconMap = function(services) {
 	// add event listeners to each of the links
 	Array.from(serviceLinks).forEach((link) => {		
 		link.addEventListener('click', (e) => {
+			e.preventDefault();
+
 			map.filterByType(e);
-		},map);
+		}, map);
     });
 }

@@ -30,10 +30,13 @@ export default class Map {
 				mapTypeId: this.config.mapType
 			});
 
-			//this.loadKml(this.config.kml.start);
 			this.addMarkers(true);
 			this.compileAges();	
-			this.compileServiceTypes();		
+			this.compileServiceTypes();	
+			
+			this.map.addListener('bounds_changed', (event) => {
+				this._setZoom();
+			});				
 		});   
 	}
 
@@ -65,6 +68,8 @@ export default class Map {
 				this.showMarker(marker.id);
 			}
 		});
+
+		this._setBounds();
 	}
 
 	/**
@@ -72,11 +77,20 @@ export default class Map {
 	 * 
 	 */
 	showMarker(markerId) {
-		this.markers.forEach((marker) => {		
-			if(marker.id === parseInt(markerId)) {								 				
-				marker.pin.setMap(marker.setVisibility(this.map));
+		this.markers.forEach((marker) => {					
+			if(marker.id === parseInt(markerId)) {						 				
+				marker.pin.setMap(marker.setVisibility(this.map));				
 			}
 		}, markerId);
+	}
+
+	/**
+	 * show or hide a selected map pin
+	 *
+	 */
+	toggle(markerId) {
+		this.showMarker(markerId);
+		this._setBounds();
 	}
 
 	/**
@@ -159,6 +173,8 @@ export default class Map {
 		this.filters.forEach((filter) => {
 			this[filter.method](filter.value);
 		});
+
+		this._setBounds();
 	}
 
 	/**
@@ -174,7 +190,7 @@ export default class Map {
 			if(!selected) {
 				return this.showAllMarkers();
 			}
-			console.log(this.ages);
+			
 			for(let age in this.ages) {				
 				if(age == selected) {
 					// filter the ages to just show the ones that meet the chosen
@@ -288,5 +304,48 @@ export default class Map {
 		});	
 
 		return activeMarkers;
+	}
+
+	/**
+	 * set the map zoom to that of the visible markers
+	 * 
+	 */
+	_setBounds() {
+		GoogleMaps.load((google) => {
+			let bounds = new google.maps.LatLngBounds();  
+		
+			new Promise((resolve, reject) => {
+				resolve(this.getActiveMarkers());
+			}).then((markers) => {
+				for(let m in markers) {
+					bounds.extend(markers[m].pin.getPosition());
+				}
+				
+				this.map.fitBounds(bounds);
+			});					
+		});
+	}
+
+	/**
+	 * set the zoom level of the map
+	 * 
+	 */
+	_setZoom() {
+		if(this.getActiveMarkers().length === 1) {
+			return this.map.setZoom(16);
+		}
+
+		if(this.getActiveMarkers().length === 0) {
+			return this._reset();
+		}
+	}
+
+	/**
+	 * reset the map to a sensible default
+	 *
+	 */
+	_reset() {
+		this.map.setCenter(new google.maps.LatLng(this.config.centreLat, this.config.centreLang));
+		this.map.setZoom(this.config.startZoom);
 	}
 }

@@ -23,7 +23,7 @@
 		<p>
 			<label>Filter by service type</label>
 			<span id="selected-service">All service types</span>
-			<ul id="age-filter">			
+			<ul id="service-filter">			
 				<li><a href="#" class="service-type" data-value="">All service types</a></li>
 				<li><a href="#" class="service-type" data-value="17">Inpatient Unit (IPU)</a></li>
 				<li><a href="#" class="service-type" data-value="18">Residential</a></li>
@@ -35,25 +35,70 @@
 				<li><a href="#" class="service-type" data-value="24">Emergency Mental Health (EMH)</a></li>
 			</ul>
 		</p>
+		
+		<ul>
+			<li>
+				<div class="service">
+					<h3>The Royal Melbourne Hospital</h3>
+					300 Grattan St, <br /> 
+					Parkville <br /> 
+					VIC<br /> 
+					3050
+					<p>
+						<a class="show-hide" href="#" data-hospital-id="10">Show on Map</a>
+					</p>	
+				</div>
+			</li>
+			<li>
+				<div class="service">
+					<h3>Werribee Mercy Hospital</h3>
+					300-310 Princes Hwy, <br /> 
+					Werribee <br /> 
+					VIC<br /> 
+					3030
+					<p>
+						<a class="show-hide" href="#" data-hospital-id="22">Show on Map</a>
+					</p>	
+				</div>
+			</li>	
+			<li>
+				<div class="service">
+					<h3>Sydney</h3>
+					<p>
+						<a class="show-hide" href="#" data-hospital-id="23">Show on Map</a>
+					</p>	
+				</div>
+			</li>			
+		</ul>
 
 		<script src="./dist/js/maps.bundle.js"></script>    
 		<script type="text/javascript">
 			new IconMap([
 				{
 					"id":10,
-					"name":"Function Centre",
+					"name":"The Royal Melbourne Hospital",
 					"location":{
-						"lat":-37.7987349,
-						"lng":144.9563131
+						"lat":-37.7987306,
+						"lng":144.9541244
 					},
 					"ages":["14"],
 					"services":["18"]},
     			{
     				"id":22,
-    				"name":"Icon Inc",
+    				"name":"Werribee Mercy Hospital",
     				"location": {
-    					"lat":-37.8316792,
-    					"lng":144.9924757
+    					"lat":-37.887066,
+    					"lng":144.695926
+    				},
+    				"ages":["15"],
+    				"services":["17"]
+    			},
+    			{
+    				"id":23,
+    				"name":"Sydney",
+    				"location": {
+    					"lat":-33.8567799,
+    					"lng":151.213108
     				},
     				"ages":["15"],
     				"services":["17"]

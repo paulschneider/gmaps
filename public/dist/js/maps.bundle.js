@@ -64,7 +64,9 @@
 		// add event listeners to each of the hospital toggles
 		Array.from(classname).forEach(function (element) {
 			element.addEventListener('click', function (e) {
-				map.showMarker(e.target.dataset.hospitalId);
+				e.preventDefault();
+
+				map.toggle(e.target.dataset.hospitalId);
 			}, map);
 		});
 
@@ -74,6 +76,8 @@
 		// add event listeners to each of the hospital toggles
 		Array.from(ageLinks).forEach(function (link) {
 			link.addEventListener('click', function (e) {
+				e.preventDefault();
+
 				map.filterByAge(e);
 			}, map);
 		});
@@ -84,6 +88,8 @@
 		// add event listeners to each of the links
 		Array.from(serviceLinks).forEach(function (link) {
 			link.addEventListener('click', function (e) {
+				e.preventDefault();
+
 				map.filterByType(e);
 			}, map);
 		});
@@ -152,10 +158,13 @@
 						mapTypeId: _this.config.mapType
 					});
 
-					//this.loadKml(this.config.kml.start);
 					_this.addMarkers(true);
 					_this.compileAges();
 					_this.compileServiceTypes();
+
+					_this.map.addListener('bounds_changed', function (event) {
+						_this._setZoom();
+					});
 				});
 			}
 
@@ -197,6 +206,8 @@
 						_this3.showMarker(marker.id);
 					}
 				});
+
+				this._setBounds();
 			}
 
 			/**
@@ -214,6 +225,18 @@
 						marker.pin.setMap(marker.setVisibility(_this4.map));
 					}
 				}, markerId);
+			}
+
+			/**
+	   * show or hide a selected map pin
+	   *
+	   */
+
+		}, {
+			key: "toggle",
+			value: function toggle(markerId) {
+				this.showMarker(markerId);
+				this._setBounds();
 			}
 
 			/**
@@ -320,6 +343,8 @@
 				this.filters.forEach(function (filter) {
 					_this7[filter.method](filter.value);
 				});
+
+				this._setBounds();
 			}
 
 			/**
@@ -340,7 +365,6 @@
 					if (!selected) {
 						return _this8.showAllMarkers();
 					}
-					console.log(_this8.ages);
 
 					var _loop = function _loop(age) {
 						if (age == selected) {
@@ -497,6 +521,60 @@
 				});
 
 				return activeMarkers;
+			}
+
+			/**
+	   * set the map zoom to that of the visible markers
+	   * 
+	   */
+
+		}, {
+			key: "_setBounds",
+			value: function _setBounds() {
+				var _this12 = this;
+
+				_googleMaps2.default.load(function (google) {
+					var bounds = new google.maps.LatLngBounds();
+
+					new Promise(function (resolve, reject) {
+						resolve(_this12.getActiveMarkers());
+					}).then(function (markers) {
+						for (var m in markers) {
+							bounds.extend(markers[m].pin.getPosition());
+						}
+
+						_this12.map.fitBounds(bounds);
+					});
+				});
+			}
+
+			/**
+	   * set the zoom level of the map
+	   * 
+	   */
+
+		}, {
+			key: "_setZoom",
+			value: function _setZoom() {
+				if (this.getActiveMarkers().length === 1) {
+					return this.map.setZoom(16);
+				}
+
+				if (this.getActiveMarkers().length === 0) {
+					return this._reset();
+				}
+			}
+
+			/**
+	   * reset the map to a sensible default
+	   *
+	   */
+
+		}, {
+			key: "_reset",
+			value: function _reset() {
+				this.map.setCenter(new google.maps.LatLng(this.config.centreLat, this.config.centreLang));
+				this.map.setZoom(this.config.startZoom);
 			}
 		}]);
 
@@ -824,7 +902,6 @@
 		}, {
 			key: "isHidden",
 			value: function isHidden() {
-				console.log("IS HIDDEN", this.hidden);
 				return this.hidden;
 			}
 		}]);

@@ -1,6 +1,6 @@
 {
   "name": "gmaps",
-  "description": "*sass --watch sass:public/dist/css",
+  "description": "This is the Gmaps package",
   "version": "1.0.1",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
