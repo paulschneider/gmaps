@@ -36,7 +36,9 @@ export default class Map {
 			
 			this.map.addListener('bounds_changed', (event) => {
 				this._setZoom();
-			});				
+			});		
+
+			this._setBounds();		
 		});   
 	}
 
@@ -68,8 +70,6 @@ export default class Map {
 				this.showMarker(marker.id);
 			}
 		});
-
-		this._setBounds();
 	}
 
 	/**
@@ -82,6 +82,8 @@ export default class Map {
 				marker.pin.setMap(marker.setVisibility(this.map));				
 			}
 		}, markerId);
+
+		this._setBounds();
 	}
 
 	/**
@@ -172,9 +174,7 @@ export default class Map {
 	apply() {	
 		this.filters.forEach((filter) => {
 			this[filter.method](filter.value);
-		});
-
-		this._setBounds();
+		});		
 	}
 
 	/**
@@ -253,6 +253,8 @@ export default class Map {
 			marker.pin.setMap(this.map);
 			marker.show();
 		});
+
+		this._setBounds();
 	}
 
 	/**
@@ -286,7 +288,7 @@ export default class Map {
 				return this.filters[active].value = option;
 			}
 		}
-
+		this._setBounds();
 		return this.filters.push({method: filter, value:  option});
 	}
 
@@ -310,7 +312,7 @@ export default class Map {
 	 * set the map zoom to that of the visible markers
 	 * 
 	 */
-	_setBounds() {
+	_setBounds() {		
 		GoogleMaps.load((google) => {
 			let bounds = new google.maps.LatLngBounds();  
 		
@@ -321,7 +323,7 @@ export default class Map {
 					bounds.extend(markers[m].pin.getPosition());
 				}
 				
-				this.map.fitBounds(bounds);
+				this.map.fitBounds(bounds);				
 			});					
 		});
 	}

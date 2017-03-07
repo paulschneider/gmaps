@@ -5,7 +5,7 @@ module.exports = {
 	entry: './src/App.js',
     output: {
         // where are the files we want to compile
-         path: './public/dist/js',
+         path: './dist/js',
          // where do we want to output the compiled 
          filename: 'maps.bundle.js'
      },

@@ -165,6 +165,8 @@
 					_this.map.addListener('bounds_changed', function (event) {
 						_this._setZoom();
 					});
+
+					_this._setBounds();
 				});
 			}
 
@@ -206,8 +208,6 @@
 						_this3.showMarker(marker.id);
 					}
 				});
-
-				this._setBounds();
 			}
 
 			/**
@@ -225,6 +225,8 @@
 						marker.pin.setMap(marker.setVisibility(_this4.map));
 					}
 				}, markerId);
+
+				this._setBounds();
 			}
 
 			/**
@@ -343,8 +345,6 @@
 				this.filters.forEach(function (filter) {
 					_this7[filter.method](filter.value);
 				});
-
-				this._setBounds();
 			}
 
 			/**
@@ -458,6 +458,8 @@
 					marker.pin.setMap(_this11.map);
 					marker.show();
 				});
+
+				this._setBounds();
 			}
 
 			/**
@@ -500,7 +502,7 @@
 						return this.filters[active].value = option;
 					}
 				}
-
+				this._setBounds();
 				return this.filters.push({ method: filter, value: option });
 			}
 
