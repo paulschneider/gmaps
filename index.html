@@ -45,7 +45,7 @@
 					VIC<br /> 
 					3050
 					<p>
-						<a class="show-hide" href="#" data-hospital-id="10">Show on Map</a>
+						<a class="front-centre" href="#" data-hospital-id="10">Show on Map</a>
 					</p>	
 				</div>
 			</li>
@@ -57,7 +57,7 @@
 					VIC<br /> 
 					3030
 					<p>
-						<a class="show-hide" href="#" data-hospital-id="22">Show on Map</a>
+						<a class="front-centre" href="#" data-hospital-id="22">Show on Map</a>
 					</p>	
 				</div>
 			</li>	
@@ -65,7 +65,7 @@
 				<div class="service">
 					<h3>Sydney</h3>
 					<p>
-						<a class="show-hide" href="#" data-hospital-id="23">Show on Map</a>
+						<a class="front-centre" href="#" data-hospital-id="23">Show on Map</a>
 					</p>	
 				</div>
 			</li>			
@@ -104,6 +104,18 @@
     				"services":["17"]
     			}
     		]);
+
+    		document.addEventListener("toggle-marker", function(e) {
+    			console.log(e.detail.hospitalId);
+    		});
+
+    		document.addEventListener("visible-markers", function(e) {
+    			console.log(e.detail.visibleItems);
+    		});
+
+    		document.addEventListener("marker-identity", function(e) {
+    			console.log(e.detail.hospitalId);
+    		});
 		</script>
 	</body>
 </html>

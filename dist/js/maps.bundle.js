@@ -59,14 +59,14 @@
 		map.build();
 
 		// grab all of the links to show/hide the hospitals
-		var classname = document.getElementsByClassName("show-hide");
+		var classname = document.getElementsByClassName("front-centre");
 
 		// add event listeners to each of the hospital toggles
 		Array.from(classname).forEach(function (element) {
 			element.addEventListener('click', function (e) {
 				e.preventDefault();
 
-				map.toggle(e.target.dataset.hospitalId);
+				map.highlight(e.target.dataset.hospitalId);
 			}, map);
 		});
 
@@ -105,8 +105,6 @@
 		value: true
 	});
 
-	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
-
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 	var _googleMaps = __webpack_require__(2);
@@ -118,6 +116,8 @@
 	var _Marker2 = _interopRequireDefault(_Marker);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -162,11 +162,11 @@
 					_this.compileAges();
 					_this.compileServiceTypes();
 
-					_this.map.addListener('bounds_changed', function (event) {
-						_this._setZoom();
-					});
-
 					_this._setBounds();
+
+					_this.map.addListener('idle', function (event) {
+						_this._emitVisibleItemsEvent();
+					});
 				});
 			}
 
@@ -230,15 +230,42 @@
 			}
 
 			/**
+	   * centre and focus on a selected marker
+	   *
+	   */
+
+		}, {
+			key: "focusMarker",
+			value: function focusMarker(markerId) {
+				var _this5 = this;
+
+				this.hideAllMarkers();
+
+				this.markers.forEach(function (marker) {
+					if (marker.id === parseInt(markerId)) {
+						marker.pin.setMap(marker.setVisibility(_this5.map));
+					}
+				}, markerId);
+			}
+
+			/**
 	   * show or hide a selected map pin
 	   *
 	   */
 
 		}, {
-			key: "toggle",
-			value: function toggle(markerId) {
-				this.showMarker(markerId);
+			key: "highlight",
+			value: function highlight(markerId) {
+				this.focusMarker(markerId);
 				this._setBounds();
+
+				var toggleEvent = new CustomEvent('toggle-marker', {
+					'detail': {
+						"hospitalId": markerId
+					}
+				});
+
+				document.dispatchEvent(toggleEvent);
 			}
 
 			/**
@@ -249,17 +276,17 @@
 		}, {
 			key: "compileAges",
 			value: function compileAges() {
-				var _this5 = this;
+				var _this6 = this;
 
 				this.markers.forEach(function (service) {
 					for (var age in service.ages) {
 						age = service.ages[age];
 
-						if (!_this5.ages[age]) {
-							_this5.ages[age] = [];
+						if (!_this6.ages[age]) {
+							_this6.ages[age] = [];
 						}
 
-						_this5.ages[age].push(service);
+						_this6.ages[age].push(service);
 					}
 				});
 			}
@@ -271,17 +298,17 @@
 		}, {
 			key: "compileServiceTypes",
 			value: function compileServiceTypes() {
-				var _this6 = this;
+				var _this7 = this;
 
 				this.markers.forEach(function (service) {
 					for (var index in service.services) {
 						var serviceType = service.services[index];
 
-						if (!_this6.serviceTypes[serviceType]) {
-							_this6.serviceTypes[serviceType] = [];
+						if (!_this7.serviceTypes[serviceType]) {
+							_this7.serviceTypes[serviceType] = [];
 						}
 
-						_this6.serviceTypes[serviceType].push(service);
+						_this7.serviceTypes[serviceType].push(service);
 					}
 				});
 			}
@@ -297,7 +324,13 @@
 				document.getElementById("selected-age").innerHTML = e.target.innerHTML;
 				this._setActiveClass(e);
 
-				this.addFilter("ageFilter", e.target.dataset.value).apply();
+				var selected = e.target.dataset.value;
+
+				if (!selected) {
+					return this.clearFilter("ageFilter").apply();
+				}
+
+				return this.addFilter("ageFilter", selected).apply();
 			}
 
 			/**
@@ -311,7 +344,13 @@
 				document.getElementById("selected-service").innerHTML = e.target.innerHTML;
 				this._setActiveClass(e);
 
-				this.addFilter("typeFilter", e.target.dataset.value).apply();
+				var selected = e.target.dataset.value;
+
+				if (!selected) {
+					return this.clearFilter("typeFilter").apply();
+				}
+
+				return this.addFilter("typeFilter", selected).apply();
 			}
 
 			/**
@@ -340,11 +379,32 @@
 		}, {
 			key: "apply",
 			value: function apply() {
-				var _this7 = this;
+				var _this8 = this;
 
-				this.filters.forEach(function (filter) {
-					_this7[filter.method](filter.value);
-				});
+				var methods = [];
+				this.showAllMarkers();
+
+				var _loop = function _loop(method) {
+					methods.push(function () {
+						var filter = _this8.filters[method];
+
+						var promise = new Promise(function (resolve, reject) {
+							resolve(_this8[filter.method](filter.value));
+						});
+
+						return promise;
+					});
+				};
+
+				for (var method in this.filters) {
+					_loop(method);
+				}
+
+				for (var i = 0; i < methods.length; i++) {
+					methods[i]().then(methods[i + 1]);
+				}
+
+				return true;
 			}
 
 			/**
@@ -355,37 +415,28 @@
 		}, {
 			key: "ageFilter",
 			value: function ageFilter(selected) {
-				var _this8 = this;
+				var _this9 = this;
 
-				this.showAllMarkers();
+				var markers = this.getActiveMarkers();
 
-				new Promise(function (resolve, reject) {
-					resolve(_this8.getActiveMarkers());
-				}).then(function (markers) {
-					if (!selected) {
-						return _this8.showAllMarkers();
+				var _loop2 = function _loop2(age) {
+					if (age == selected) {
+						// filter the ages to just show the ones that meet the chosen
+						// filter option
+						var filtered = markers.filter(function (marker) {
+							return _this9.ages[age].includes(marker);
+						});
+
+						_this9.showMarkers(filtered);
 					}
+				};
 
-					var _loop = function _loop(age) {
-						if (age == selected) {
-							// filter the ages to just show the ones that meet the chosen
-							// filter option
-							var filtered = markers.filter(function (marker) {
-								return _this8.ages[age].includes(marker);
-							});
+				for (var age in this.ages) {
+					_loop2(age);
+				}
 
-							return {
-								v: _this8.showMarkers(filtered)
-							};
-						}
-					};
-
-					for (var age in _this8.ages) {
-						var _ret = _loop(age);
-
-						if ((typeof _ret === "undefined" ? "undefined" : _typeof(_ret)) === "object") return _ret.v;
-					}
-				});
+				// we need to return something for the promise to complete
+				return true;
 			}
 
 			/**
@@ -396,35 +447,28 @@
 		}, {
 			key: "typeFilter",
 			value: function typeFilter(selected) {
-				var _this9 = this;
+				var _this10 = this;
 
-				new Promise(function (resolve, reject) {
-					resolve(_this9.getActiveMarkers());
-				}).then(function (markers) {
-					if (!selected) {
-						return _this9.showAllMarkers();
+				var markers = this.getActiveMarkers();
+
+				var _loop3 = function _loop3(serviceType) {
+					if (serviceType == selected) {
+						// filter the service types to just show the ones that meet 
+						// the selected value
+						var filtered = markers.filter(function (marker) {
+							return _this10.serviceTypes[serviceType].includes(marker);
+						});
+
+						_this10.showMarkers(filtered);
 					}
+				};
 
-					var _loop2 = function _loop2(serviceType) {
-						if (serviceType == selected) {
-							// filter the service types to just show the ones that meet 
-							// the selected value
-							var filtered = markers.filter(function (marker) {
-								return _this9.serviceTypes[serviceType].includes(marker);
-							});
+				for (var serviceType in this.serviceTypes) {
+					_loop3(serviceType);
+				}
 
-							return {
-								v: _this9.showMarkers(filtered)
-							};
-						}
-					};
-
-					for (var serviceType in _this9.serviceTypes) {
-						var _ret2 = _loop2(serviceType);
-
-						if ((typeof _ret2 === "undefined" ? "undefined" : _typeof(_ret2)) === "object") return _ret2.v;
-					}
-				});
+				// we need to return something for the promise to complete
+				return true;
 			}
 
 			/**
@@ -434,13 +478,13 @@
 
 		}, {
 			key: "showMarkers",
-			value: function showMarkers(markers) {
-				var _this10 = this;
+			value: function showMarkers(markers, emitVisibleItems) {
+				var _this11 = this;
 
 				this.hideAllMarkers();
 
 				markers.forEach(function (marker) {
-					_this10.showMarker(marker.id);
+					_this11.showMarker(marker.id);
 				});
 			}
 
@@ -452,14 +496,7 @@
 		}, {
 			key: "showAllMarkers",
 			value: function showAllMarkers() {
-				var _this11 = this;
-
-				this.markers.forEach(function (marker) {
-					marker.pin.setMap(_this11.map);
-					marker.show();
-				});
-
-				this._setBounds();
+				this.showMarkers(this.markers);
 			}
 
 			/**
@@ -490,6 +527,23 @@
 			}
 
 			/**
+	   * clear an applied filter type
+	   *
+	   */
+
+		}, {
+			key: "clearFilter",
+			value: function clearFilter(cleareable) {
+				for (var filter in this.filters) {
+					if (this.filters[filter].method === cleareable) {
+						this.filters = [].concat(_toConsumableArray(this.filters.slice(0, filter)), _toConsumableArray(this.filters.slice(filter + 1)));
+					}
+				}
+
+				return this;
+			}
+
+			/**
 	   * update an existing filter with the newly selected value
 	   *
 	   */
@@ -502,6 +556,7 @@
 						return this.filters[active].value = option;
 					}
 				}
+
 				this._setBounds();
 				return this.filters.push({ method: filter, value: option });
 			}
@@ -546,6 +601,7 @@
 						}
 
 						_this12.map.fitBounds(bounds);
+						_this12._setZoom();
 					});
 				});
 			}
@@ -577,6 +633,29 @@
 			value: function _reset() {
 				this.map.setCenter(new google.maps.LatLng(this.config.centreLat, this.config.centreLang));
 				this.map.setZoom(this.config.startZoom);
+			}
+
+			/**
+	   * emit and event listing out the currently visible map markers
+	   * 
+	   */
+
+		}, {
+			key: "_emitVisibleItemsEvent",
+			value: function _emitVisibleItemsEvent() {
+				var items = [];
+
+				this.getActiveMarkers().forEach(function (marker) {
+					items.push(marker.id);
+				});
+
+				var visibilityEvent = new CustomEvent('visible-markers', {
+					'detail': {
+						"visibleItems": items
+					}
+				});
+
+				document.dispatchEvent(visibilityEvent);
 			}
 		}]);
 
@@ -851,6 +930,10 @@
 				_this.pin = new google.maps.Marker({
 					position: { lat: config.location.lat, lng: config.location.lng }
 				});
+
+				_this.pin.addListener("click", function (e) {
+					_this._emitMarkerIdentity(_this.id);
+				});
 			});
 
 			return this;
@@ -905,6 +988,23 @@
 			key: "isHidden",
 			value: function isHidden() {
 				return this.hidden;
+			}
+
+			/**
+	   * when interacted with this marker will provide its identity
+	   *
+	   */
+
+		}, {
+			key: "_emitMarkerIdentity",
+			value: function _emitMarkerIdentity(identity) {
+				var identityEvent = new CustomEvent('marker-identity', {
+					'detail': {
+						"hospitalId": identity
+					}
+				});
+
+				document.dispatchEvent(identityEvent);
 			}
 		}]);
 

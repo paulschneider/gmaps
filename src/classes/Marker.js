@@ -17,6 +17,10 @@ export default class Marker {
 			this.pin = new google.maps.Marker({
 				position: {lat: config.location.lat, lng: config.location.lng}
 			});
+
+			this.pin.addListener("click", (e) => {
+				this._emitMarkerIdentity(this.id);
+			});
 		});				
 
 		return this;	
@@ -58,5 +62,19 @@ export default class Marker {
 	 */
 	isHidden() {
 		return this.hidden;
+	}
+
+	/**
+	 * when interacted with this marker will provide its identity
+	 *
+	 */
+	_emitMarkerIdentity(identity) {
+		let identityEvent = new CustomEvent('marker-identity', {
+			'detail' : {
+				"hospitalId" : identity
+			}
+		});
+
+		document.dispatchEvent(identityEvent);
 	}
 }

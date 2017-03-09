@@ -6,14 +6,14 @@ window.IconMap = function(services) {
 	map.build();
 
 	// grab all of the links to show/hide the hospitals
-	let classname = document.getElementsByClassName("show-hide");
+	let classname = document.getElementsByClassName("front-centre");
 
 	// add event listeners to each of the hospital toggles
 	Array.from(classname).forEach((element) => {
 		element.addEventListener('click', (e) => {
 			e.preventDefault();
 			
-			map.toggle(e.target.dataset.hospitalId);
+			map.highlight(e.target.dataset.hospitalId);
 		}, map);
     });
 

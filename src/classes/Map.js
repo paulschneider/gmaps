@@ -34,12 +34,12 @@ export default class Map {
 			this.compileAges();	
 			this.compileServiceTypes();	
 			
-			this.map.addListener('bounds_changed', (event) => {
-				this._setZoom();
-			});		
+			this._setBounds();	
 
-			this._setBounds();		
-		});   
+			this.map.addListener('idle', (event) => {
+				this._emitVisibleItemsEvent();
+			});	
+		});	
 	}
 
 	/**
@@ -87,12 +87,34 @@ export default class Map {
 	}
 
 	/**
+	 * centre and focus on a selected marker
+	 *
+	 */
+	focusMarker(markerId) {
+		this.hideAllMarkers();
+
+		this.markers.forEach((marker) => {					
+			if(marker.id === parseInt(markerId)) {						 				
+				marker.pin.setMap(marker.setVisibility(this.map));				
+			}
+		}, markerId);
+	}
+
+	/**
 	 * show or hide a selected map pin
 	 *
 	 */
-	toggle(markerId) {
-		this.showMarker(markerId);
+	highlight(markerId) {
+		this.focusMarker(markerId);
 		this._setBounds();
+		
+		let toggleEvent = new CustomEvent('toggle-marker', {
+			'detail' : {
+				"hospitalId" : markerId
+			}
+		});
+		
+		document.dispatchEvent(toggleEvent);
 	}
 
 	/**
@@ -138,7 +160,13 @@ export default class Map {
 		document.getElementById("selected-age").innerHTML = e.target.innerHTML;
 		this._setActiveClass(e);
 		
-		this.addFilter("ageFilter", e.target.dataset.value).apply();	
+		let selected = e.target.dataset.value;
+
+		if(!selected) {
+			return this.clearFilter("ageFilter").apply();
+		}
+
+		return this.addFilter("ageFilter", selected).apply();	
 	}	
 
 	/**
@@ -149,7 +177,13 @@ export default class Map {
 		document.getElementById("selected-service").innerHTML = e.target.innerHTML;		
 		this._setActiveClass(e);
 
-		this.addFilter("typeFilter", e.target.dataset.value).apply();	
+		let selected = e.target.dataset.value;
+
+		if(!selected) {
+			return this.clearFilter("typeFilter").apply();
+		}
+
+		return this.addFilter("typeFilter", selected).apply();	
 	}
 
 	/**
@@ -172,76 +206,84 @@ export default class Map {
 	 *
 	 */
 	apply() {	
-		this.filters.forEach((filter) => {
-			this[filter.method](filter.value);
-		});		
+		let methods = [];
+		this.showAllMarkers();
+
+		for(let method in this.filters) {			
+			methods.push(() => {
+				let filter = this.filters[method];
+				
+				let promise = new Promise((resolve, reject) => {				
+					resolve(this[filter.method](filter.value));
+				});
+
+				return promise;
+			});
+		}
+
+		for(let i = 0; i < methods.length; i++) {			
+			methods[i]().then(methods[i+1]);
+		}	
+
+		return true;	
 	}
 
 	/**
 	 * apply out the age filter
 	 * 
 	 */
-	ageFilter(selected) {	
-		this.showAllMarkers();
+	ageFilter(selected) {		
+		let markers = this.getActiveMarkers();
 
-		new Promise((resolve, reject) => {
-			resolve(this.getActiveMarkers());
-		}).then((markers) => {
-			if(!selected) {
-				return this.showAllMarkers();
-			}
-			
-			for(let age in this.ages) {				
-				if(age == selected) {
-					// filter the ages to just show the ones that meet the chosen
-					// filter option
-					let filtered = markers.filter((marker) => {
-						return this.ages[age].includes(marker);
-					});
+		for(let age in this.ages) {				
+			if(age == selected) {
+				// filter the ages to just show the ones that meet the chosen
+				// filter option
+				let filtered = markers.filter((marker) => {
+					return this.ages[age].includes(marker);
+				});
 
-					return this.showMarkers(filtered);
-				}
+				this.showMarkers(filtered);
 			}
-		});	
+		}
+
+		// we need to return something for the promise to complete
+		return true;
 	}	
 
 	/**
 	 * apply the service type filter
 	 * 
 	 */
-	typeFilter(selected) {
+	typeFilter(selected) {	
+		let markers = this.getActiveMarkers();
 
-		new Promise((resolve, reject) => {
-			resolve(this.getActiveMarkers());
-		}).then((markers) => {
-			if(!selected) {
-				return this.showAllMarkers();
+		for(let serviceType in this.serviceTypes) {
+			if(serviceType == selected) {
+				// filter the service types to just show the ones that meet 
+				// the selected value
+				let filtered = markers.filter((marker) => {
+					return this.serviceTypes[serviceType].includes(marker);
+				});
+				
+				this.showMarkers(filtered);
 			}
+		}
 
-			for(let serviceType in this.serviceTypes) {
-				if(serviceType == selected) {
-					// filter the service types to just show the ones that meet 
-					// the selected value
-					let filtered = markers.filter((marker) => {
-						return this.serviceTypes[serviceType].includes(marker);
-					});
-
-					return this.showMarkers(filtered);
-				}
-			}
-		});	
+		// we need to return something for the promise to complete
+		return true;
 	}
 
 	/**
 	 * show all of the markers in a provided list
 	 * 
 	 */
-	showMarkers(markers) {
+	showMarkers(markers, emitVisibleItems) {
 		this.hideAllMarkers();
 
 		markers.forEach((marker) => {
 			this.showMarker(marker.id);
-		});
+		});					
 	}
 
 	/**
@@ -249,12 +291,7 @@ export default class Map {
 	 * 
 	 */
 	showAllMarkers() {
-		this.markers.forEach((marker) => {		
-			marker.pin.setMap(this.map);
-			marker.show();
-		});
-
-		this._setBounds();
+		this.showMarkers(this.markers);
 	}
 
 	/**
@@ -279,6 +316,20 @@ export default class Map {
 	}
 
 	/**
+	 * clear an applied filter type
+	 *
+	 */
+	clearFilter(cleareable) {
+		for (let filter in this.filters) {
+			if(this.filters[filter].method === cleareable) {
+				this.filters = [...this.filters.slice(0, filter), ...this.filters.slice(filter+1)];		
+			}
+		}		
+
+		return this;
+	}
+
+	/**
 	 * update an existing filter with the newly selected value
 	 *
 	 */
@@ -288,6 +339,7 @@ export default class Map {
 				return this.filters[active].value = option;
 			}
 		}
+
 		this._setBounds();
 		return this.filters.push({method: filter, value:  option});
 	}
@@ -323,7 +375,8 @@ export default class Map {
 					bounds.extend(markers[m].pin.getPosition());
 				}
 				
-				this.map.fitBounds(bounds);				
+				this.map.fitBounds(bounds);	
+				this._setZoom();			
 			});					
 		});
 	}
@@ -349,5 +402,25 @@ export default class Map {
 	_reset() {
 		this.map.setCenter(new google.maps.LatLng(this.config.centreLat, this.config.centreLang));
 		this.map.setZoom(this.config.startZoom);
+	}
+
+	/**
+	 * emit and event listing out the currently visible map markers
+	 * 
+	 */
+	_emitVisibleItemsEvent() {
+		let items = [];
+
+		this.getActiveMarkers().forEach((marker) => {
+			items.push(marker.id);
+		});
+
+		let visibilityEvent = new CustomEvent('visible-markers', {
+			'detail' : {
+				"visibleItems" : items
+			}
+		});
+
+		document.dispatchEvent(visibilityEvent);
 	}
 }
