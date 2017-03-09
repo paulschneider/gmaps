@@ -200,7 +200,7 @@
 				var _this3 = this;
 
 				this.markers.forEach(function (marker) {
-					if (marker.id === parseInt(markerId)) {
+					if (marker.id == parseInt(markerId)) {
 						marker.pin.setMap(marker.setVisibility(_this3.map));
 					}
 				}, markerId);
@@ -221,7 +221,7 @@
 				this.hideAllMarkers();
 
 				this.markers.forEach(function (marker) {
-					if (marker.id === parseInt(markerId)) {
+					if (marker.id == parseInt(markerId)) {
 						marker.pin.setMap(marker.setVisibility(_this4.map));
 					}
 				}, markerId);
@@ -525,7 +525,7 @@
 			key: "clearFilter",
 			value: function clearFilter(cleareable) {
 				for (var filter in this.filters) {
-					if (this.filters[filter].method === cleareable) {
+					if (this.filters[filter].method == cleareable) {
 						this.filters = [].concat(_toConsumableArray(this.filters.slice(0, filter)), _toConsumableArray(this.filters.slice(filter + 1)));
 					}
 				}
@@ -542,7 +542,7 @@
 			key: "applyFilter",
 			value: function applyFilter(filter, option) {
 				for (var active in this.filters) {
-					if (this.filters[active].method === filter) {
+					if (this.filters[active].method == filter) {
 						return this.filters[active].value = option;
 					}
 				}
@@ -604,11 +604,11 @@
 		}, {
 			key: "_setZoom",
 			value: function _setZoom() {
-				if (this.getActiveMarkers().length === 1) {
+				if (this.getActiveMarkers().length == 1) {
 					return this.map.setZoom(16);
 				}
 
-				if (this.getActiveMarkers().length === 0) {
+				if (this.getActiveMarkers().length == 0) {
 					return this._reset();
 				}
 			}

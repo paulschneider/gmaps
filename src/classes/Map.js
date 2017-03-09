@@ -62,7 +62,7 @@ export default class Map {
 	 */
 	showMarker(markerId) {
 		this.markers.forEach((marker) => {					
-			if(marker.id === parseInt(markerId)) {						 				
+			if(marker.id == parseInt(markerId)) {						 				
 				marker.pin.setMap(marker.setVisibility(this.map));				
 			}
 		}, markerId);
@@ -78,7 +78,7 @@ export default class Map {
 		this.hideAllMarkers();
 
 		this.markers.forEach((marker) => {					
-			if(marker.id === parseInt(markerId)) {						 				
+			if(marker.id == parseInt(markerId)) {						 				
 				marker.pin.setMap(marker.setVisibility(this.map));				
 			}
 		}, markerId);
@@ -315,7 +315,7 @@ export default class Map {
 	 */
 	clearFilter(cleareable) {
 		for (let filter in this.filters) {
-			if(this.filters[filter].method === cleareable) {
+			if(this.filters[filter].method == cleareable) {
 				this.filters = [...this.filters.slice(0, filter), ...this.filters.slice(filter+1)];		
 			}
 		}		
@@ -329,7 +329,7 @@ export default class Map {
 	 */
 	applyFilter(filter, option) {
 		for(let active in this.filters) {
-			if(this.filters[active].method === filter) {
+			if(this.filters[active].method == filter) {
 				return this.filters[active].value = option;
 			}
 		}
@@ -380,11 +380,11 @@ export default class Map {
 	 * 
 	 */
 	_setZoom() {
-		if(this.getActiveMarkers().length === 1) {
+		if(this.getActiveMarkers().length == 1) {
 			return this.map.setZoom(16);
 		}
 
-		if(this.getActiveMarkers().length === 0) {
+		if(this.getActiveMarkers().length == 0) {
 			return this._reset();
 		}
 	}
