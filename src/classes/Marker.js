@@ -69,9 +69,10 @@ export default class Marker {
 	 *
 	 */
 	_emitMarkerIdentity(identity) {
-		let identityEvent = new CustomEvent('marker-identity', {
+		let identityEvent = new CustomEvent('gmaps-marker-identity', {
 			'detail' : {
-				"hospitalId" : identity
+				marker 		: this.pin,
+				hospitalId 	: identity
 			}
 		});
 

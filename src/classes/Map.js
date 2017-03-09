@@ -34,26 +34,10 @@ export default class Map {
 			this.compileAges();	
 			this.compileServiceTypes();	
 			
-			this._setBounds();	
-
 			this.map.addListener('idle', (event) => {
 				this._emitVisibleItemsEvent();
 			});	
 		});	
-	}
-
-	/**
-	 * load up the KML overlay
-	 * 
-	 */
-	loadKml(src) {
-		GoogleMaps.load((google) => {		
-			this.kmlLayer = new google.maps.KmlLayer({
-				url: src
-			});
-
-			this.kmlLayer.setMap(this.map);
-		});		
 	}
 
 	/**
@@ -108,13 +92,23 @@ export default class Map {
 		this.focusMarker(markerId);
 		this._setBounds();
 		
-		let toggleEvent = new CustomEvent('toggle-marker', {
-			'detail' : {
-				"hospitalId" : markerId
+		let promise = new Promise((resolve, reject) => {				
+			let marker = this._getMarker(markerId);
+			
+			if(marker) {
+				resolve(marker);	
 			}
-		});
-		
-		document.dispatchEvent(toggleEvent);
+			
+		}).then((marker) => {
+			let toggleEvent = new CustomEvent('gmaps-centre-marker', {
+				'detail' : {
+					hospitalId 		: marker.id,
+					marker 			: marker
+				}
+			});
+
+			document.dispatchEvent(toggleEvent);	
+		});		
 	}
 
 	/**
@@ -412,10 +406,13 @@ export default class Map {
 		let items = [];
 
 		this.getActiveMarkers().forEach((marker) => {
-			items.push(marker.id);
+			items.push({
+				hospitalId 		: marker.id,
+				marker 			: marker.pin
+			});
 		});
 
-		let visibilityEvent = new CustomEvent('visible-markers', {
+		let visibilityEvent = new CustomEvent('gmaps-visible-markers', {
 			'detail' : {
 				"visibleItems" : items
 			}
@@ -423,4 +420,16 @@ export default class Map {
 
 		document.dispatchEvent(visibilityEvent);
 	}
+
+	/**
+	 * retrieve a given marker from the source list by its ID
+	 *
+	 */
+	_getMarker(markerId) {
+		for(let marker in this.markers) {
+			if(this.markers[marker].id == markerId) {
+				return this.markers[marker];
+			}
+		}
+	}	
 }

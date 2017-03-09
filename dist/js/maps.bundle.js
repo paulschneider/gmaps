@@ -162,30 +162,9 @@
 					_this.compileAges();
 					_this.compileServiceTypes();
 
-					_this._setBounds();
-
 					_this.map.addListener('idle', function (event) {
 						_this._emitVisibleItemsEvent();
 					});
-				});
-			}
-
-			/**
-	   * load up the KML overlay
-	   * 
-	   */
-
-		}, {
-			key: "loadKml",
-			value: function loadKml(src) {
-				var _this2 = this;
-
-				_googleMaps2.default.load(function (google) {
-					_this2.kmlLayer = new google.maps.KmlLayer({
-						url: src
-					});
-
-					_this2.kmlLayer.setMap(_this2.map);
 				});
 			}
 
@@ -197,15 +176,15 @@
 		}, {
 			key: "addMarkers",
 			value: function addMarkers(displayOnMap) {
-				var _this3 = this;
+				var _this2 = this;
 
 				// iterate over the services and put them on the map
 				this.services.forEach(function (service) {
 					var marker = new _Marker2.default(service);
-					_this3.markers.push(marker);
+					_this2.markers.push(marker);
 
 					if (displayOnMap) {
-						_this3.showMarker(marker.id);
+						_this2.showMarker(marker.id);
 					}
 				});
 			}
@@ -218,11 +197,11 @@
 		}, {
 			key: "showMarker",
 			value: function showMarker(markerId) {
-				var _this4 = this;
+				var _this3 = this;
 
 				this.markers.forEach(function (marker) {
 					if (marker.id === parseInt(markerId)) {
-						marker.pin.setMap(marker.setVisibility(_this4.map));
+						marker.pin.setMap(marker.setVisibility(_this3.map));
 					}
 				}, markerId);
 
@@ -237,13 +216,13 @@
 		}, {
 			key: "focusMarker",
 			value: function focusMarker(markerId) {
-				var _this5 = this;
+				var _this4 = this;
 
 				this.hideAllMarkers();
 
 				this.markers.forEach(function (marker) {
 					if (marker.id === parseInt(markerId)) {
-						marker.pin.setMap(marker.setVisibility(_this5.map));
+						marker.pin.setMap(marker.setVisibility(_this4.map));
 					}
 				}, markerId);
 			}
@@ -256,16 +235,27 @@
 		}, {
 			key: "highlight",
 			value: function highlight(markerId) {
+				var _this5 = this;
+
 				this.focusMarker(markerId);
 				this._setBounds();
 
-				var toggleEvent = new CustomEvent('toggle-marker', {
-					'detail': {
-						"hospitalId": markerId
-					}
-				});
+				var promise = new Promise(function (resolve, reject) {
+					var marker = _this5._getMarker(markerId);
 
-				document.dispatchEvent(toggleEvent);
+					if (marker) {
+						resolve(marker);
+					}
+				}).then(function (marker) {
+					var toggleEvent = new CustomEvent('gmaps-centre-marker', {
+						'detail': {
+							hospitalId: marker.id,
+							marker: marker
+						}
+					});
+
+					document.dispatchEvent(toggleEvent);
+				});
 			}
 
 			/**
@@ -646,16 +636,34 @@
 				var items = [];
 
 				this.getActiveMarkers().forEach(function (marker) {
-					items.push(marker.id);
+					items.push({
+						hospitalId: marker.id,
+						marker: marker.pin
+					});
 				});
 
-				var visibilityEvent = new CustomEvent('visible-markers', {
+				var visibilityEvent = new CustomEvent('gmaps-visible-markers', {
 					'detail': {
 						"visibleItems": items
 					}
 				});
 
 				document.dispatchEvent(visibilityEvent);
+			}
+
+			/**
+	   * retrieve a given marker from the source list by its ID
+	   *
+	   */
+
+		}, {
+			key: "_getMarker",
+			value: function _getMarker(markerId) {
+				for (var marker in this.markers) {
+					if (this.markers[marker].id == markerId) {
+						return this.markers[marker];
+					}
+				}
 			}
 		}]);
 
@@ -998,9 +1006,10 @@
 		}, {
 			key: "_emitMarkerIdentity",
 			value: function _emitMarkerIdentity(identity) {
-				var identityEvent = new CustomEvent('marker-identity', {
+				var identityEvent = new CustomEvent('gmaps-marker-identity', {
 					'detail': {
-						"hospitalId": identity
+						marker: this.pin,
+						hospitalId: identity
 					}
 				});
 

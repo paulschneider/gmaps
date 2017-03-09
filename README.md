@@ -39,17 +39,22 @@
 ### Events ###
 
 ```
-	document.addEventListener("toggle-marker", function(e) {
-    	console.log(e.detail.hospitalId);
-    });
+	document.addEventListener("gmaps-centre-marker", function(e) {
+		console.log("gmaps-centre-marker");
+		console.log(e.detail.hospitalId);
+		console.log(e.detail.marker);
+	});
 
-    document.addEventListener("visible-markers", function(e) {
-    	console.log(e.detail.visibleItems);
-    });
+	document.addEventListener("gmaps-visible-markers", function(e) {
+		console.log("gmaps-visible-markers");
+		console.log(e.detail.visibleItems);
+	});
 
-    document.addEventListener("marker-identity", function(e) {
-    	console.log(e.detail.hospitalId);
-    });
+	document.addEventListener("gmaps-marker-identity", function(e) {
+		console.log("gmaps-marker-identity");
+		console.log(e.detail.hospitalId);
+		console.log(e.detail.marker);
+	});
 ```
 
 ### CSS Sass-ing ###
