@@ -14,7 +14,7 @@
 
 ### Event listeners are added to the following classes when the app is fired up: ###
 
-* show / hide links = **.show-hide** [show hide map markers. By Default markers are displayed on start up]
+* show / hide links = **.front-centre** [centre the map on a given marker]
 
 * age filter select = **.age-filter** [filter the map markers by the age tag given to them]
 
@@ -34,6 +34,22 @@
 		services: ["inpatient-unit", "residential", "community-care", "community-team"],
 	},
 ]
+```
+
+### Events ###
+
+```
+	document.addEventListener("toggle-marker", function(e) {
+    	console.log(e.detail.hospitalId);
+    });
+
+    document.addEventListener("visible-markers", function(e) {
+    	console.log(e.detail.visibleItems);
+    });
+
+    document.addEventListener("marker-identity", function(e) {
+    	console.log(e.detail.hospitalId);
+    });
 ```
 
 ### CSS Sass-ing ###
