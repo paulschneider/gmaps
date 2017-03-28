@@ -16,6 +16,7 @@ export default class Map {
 		this.ages 			= {};		
 		this.serviceTypes 	= {};
 		this.filters 		= [];
+		this.googlemap 		= null;
 	}
 
 	/**
@@ -37,7 +38,17 @@ export default class Map {
 			this.map.addListener('idle', (event) => {
 				this._emitVisibleItemsEvent();
 			});	
-		});	
+
+			document.dispatchEvent(new Event('gmap-available'));
+		});
+	}
+
+	/**
+	 * return the underlying google maps instance
+	 *
+	 */
+	getMap() {
+		return this.map;
 	}
 
 	/**
@@ -313,12 +324,14 @@ export default class Map {
 	 * clear an applied filter type
 	 *
 	 */
-	clearFilter(cleareable) {
+	clearFilter(cleareable) {	
 		for (let filter in this.filters) {
-			if(this.filters[filter].method == cleareable) {
+			if(this.filters[filter] && this.filters[filter].method == cleareable) {
 				this.filters = [...this.filters.slice(0, filter), ...this.filters.slice(filter+1)];		
 			}
 		}		
+
+		this._mapFiltered();
 
 		return this;
 	}
@@ -334,6 +347,7 @@ export default class Map {
 			}
 		}
 
+		this._mapFiltered();
 		this._setBounds();
 		return this.filters.push({method: filter, value:  option});
 	}
@@ -352,6 +366,14 @@ export default class Map {
 		});	
 
 		return activeMarkers;
+	}
+
+	/**
+	 * trigger an event to state that some filter was updated
+	 *
+	 */
+	_mapFiltered() {
+		document.dispatchEvent(new Event('gmap-filter-changed'));	
 	}
 
 	/**

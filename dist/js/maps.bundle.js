@@ -55,8 +55,9 @@
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	window.IconMap = function (services) {
-		var map = new _Map2.default(_Setup.Setup, services);
-		map.build();
+		var app = new _Map2.default(_Setup.Setup, services);
+
+		app.build();
 
 		// grab all of the links to show/hide the hospitals
 		var classname = document.getElementsByClassName("front-centre");
@@ -66,8 +67,8 @@
 			element.addEventListener('click', function (e) {
 				e.preventDefault();
 
-				map.highlight(e.target.dataset.hospitalId);
-			}, map);
+				app.highlight(e.target.dataset.hospitalId);
+			}, app);
 		});
 
 		// grab all of the links to filter by age range
@@ -78,8 +79,8 @@
 			link.addEventListener('click', function (e) {
 				e.preventDefault();
 
-				map.filterByAge(e);
-			}, map);
+				app.filterByAge(e);
+			}, app);
 		});
 
 		// grab all of the links to filter by service typ
@@ -90,9 +91,14 @@
 			link.addEventListener('click', function (e) {
 				e.preventDefault();
 
-				map.filterByType(e);
-			}, map);
+				app.filterByType(e);
+			}, app);
 		});
+
+		// expose the underlying google map instance
+		this.map = function () {
+			return app.map;
+		};
 	};
 
 /***/ },
@@ -138,6 +144,7 @@
 			this.ages = {};
 			this.serviceTypes = {};
 			this.filters = [];
+			this.googlemap = null;
 		}
 
 		/**
@@ -165,7 +172,20 @@
 					_this.map.addListener('idle', function (event) {
 						_this._emitVisibleItemsEvent();
 					});
+
+					document.dispatchEvent(new Event('gmap-available'));
 				});
+			}
+
+			/**
+	   * return the underlying google maps instance
+	   *
+	   */
+
+		}, {
+			key: "getMap",
+			value: function getMap() {
+				return this.map;
 			}
 
 			/**
@@ -525,10 +545,12 @@
 			key: "clearFilter",
 			value: function clearFilter(cleareable) {
 				for (var filter in this.filters) {
-					if (this.filters[filter].method == cleareable) {
+					if (this.filters[filter] && this.filters[filter].method == cleareable) {
 						this.filters = [].concat(_toConsumableArray(this.filters.slice(0, filter)), _toConsumableArray(this.filters.slice(filter + 1)));
 					}
 				}
+
+				this._mapFiltered();
 
 				return this;
 			}
@@ -547,6 +569,7 @@
 					}
 				}
 
+				this._mapFiltered();
 				this._setBounds();
 				return this.filters.push({ method: filter, value: option });
 			}
@@ -568,6 +591,17 @@
 				});
 
 				return activeMarkers;
+			}
+
+			/**
+	   * trigger an event to state that some filter was updated
+	   *
+	   */
+
+		}, {
+			key: "_mapFiltered",
+			value: function _mapFiltered() {
+				document.dispatchEvent(new Event('gmap-filter-changed'));
 			}
 
 			/**

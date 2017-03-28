@@ -38,6 +38,14 @@
 
 ### Events ###
 
+* gmaps-centre-marker
+* gmaps-visible-markers
+* gmaps-marker-identity
+* gmap-available
+* gmap-filter-changed
+
+#### Example Events #####
+
 ```
 	document.addEventListener("gmaps-centre-marker", function(e) {
 		console.log("gmaps-centre-marker");
@@ -54,6 +62,15 @@
 		console.log("gmaps-marker-identity");
 		console.log(e.detail.hospitalId);
 		console.log(e.detail.marker);
+	});
+
+	document.addEventListener("gmap-available", function(e) {
+		console.log("google maps is available");
+		console.log(app.map());
+	});
+
+	document.addEventListener("gmap-filter-changed", function(e) {
+		console.log("a filter was updated");
 	});
 ```
 

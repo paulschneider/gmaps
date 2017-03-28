@@ -2,8 +2,9 @@ import Map from "./classes/Map";
 import {Setup as Config} from "./config/Setup";
 
 window.IconMap = function(services) {
-	let map = new Map(Config, services);
-	map.build();
+	let app = new Map(Config, services);
+	
+	app.build();
 
 	// grab all of the links to show/hide the hospitals
 	let classname = document.getElementsByClassName("front-centre");
@@ -13,8 +14,8 @@ window.IconMap = function(services) {
 		element.addEventListener('click', (e) => {
 			e.preventDefault();
 			
-			map.highlight(e.target.dataset.hospitalId);
-		}, map);
+			app.highlight(e.target.dataset.hospitalId);
+		}, app);
     });
 
     // grab all of the links to filter by age range
@@ -25,8 +26,8 @@ window.IconMap = function(services) {
 		link.addEventListener('click', (e) => {
 			e.preventDefault();
 
-			map.filterByAge(e);
-		}, map);
+			app.filterByAge(e);
+		}, app);
     });
 
     // grab all of the links to filter by service typ
@@ -37,7 +38,12 @@ window.IconMap = function(services) {
 		link.addEventListener('click', (e) => {
 			e.preventDefault();
 
-			map.filterByType(e);
-		}, map);
+			app.filterByType(e);
+		}, app);
     });
+
+	// expose the underlying google map instance
+    this.map = function() {
+    	return app.map;
+    }
 }
