@@ -31,6 +31,7 @@ export default class Map {
 				mapTypeId: this.config.mapType
 			});
 
+			this.loadKml(this.config.kml.start);
 			this.addMarkers(true);
 			this.compileAges();	
 			this.compileServiceTypes();	
@@ -43,6 +44,20 @@ export default class Map {
 		});
 	}
 
+	/**
+	 * load up the KML overlay
+	 * 
+	 */
+	loadKml(src) {
+		GoogleMaps.load((google) => {		
+			this.kmlLayer = new google.maps.KmlLayer({
+				url: src
+			});
+
+			this.kmlLayer.setMap(this.map);
+		});		
+	}
+	
 	/**
 	 * return the underlying google maps instance
 	 *

@@ -6,7 +6,7 @@ export const Setup = Object.freeze({
 	startZoom: 14,
 	mapType: "roadmap",
 	kml: {
-		start: 'https://raw.githubusercontent.com/paulschneider/kml-test/master/source-4.kml?123132654',
+		start: 'https://raw.githubusercontent.com/paulschneider/kml-test/master/nwmh-catchment-areas-march-2017.kml?123132654',
 		replacement: 'https://raw.githubusercontent.com/paulschneider/kml-test/master/source-5.kml?123132654'
 	}
 });

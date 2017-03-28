@@ -165,6 +165,7 @@
 						mapTypeId: _this.config.mapType
 					});
 
+					_this.loadKml(_this.config.kml.start);
 					_this.addMarkers(true);
 					_this.compileAges();
 					_this.compileServiceTypes();
@@ -174,6 +175,25 @@
 					});
 
 					document.dispatchEvent(new Event('gmap-available'));
+				});
+			}
+
+			/**
+	   * load up the KML overlay
+	   * 
+	   */
+
+		}, {
+			key: "loadKml",
+			value: function loadKml(src) {
+				var _this2 = this;
+
+				_googleMaps2.default.load(function (google) {
+					_this2.kmlLayer = new google.maps.KmlLayer({
+						url: src
+					});
+
+					_this2.kmlLayer.setMap(_this2.map);
 				});
 			}
 
@@ -196,15 +216,15 @@
 		}, {
 			key: "addMarkers",
 			value: function addMarkers(displayOnMap) {
-				var _this2 = this;
+				var _this3 = this;
 
 				// iterate over the services and put them on the map
 				this.services.forEach(function (service) {
 					var marker = new _Marker2.default(service);
-					_this2.markers.push(marker);
+					_this3.markers.push(marker);
 
 					if (displayOnMap) {
-						_this2.showMarker(marker.id);
+						_this3.showMarker(marker.id);
 					}
 				});
 			}
@@ -217,11 +237,11 @@
 		}, {
 			key: "showMarker",
 			value: function showMarker(markerId) {
-				var _this3 = this;
+				var _this4 = this;
 
 				this.markers.forEach(function (marker) {
 					if (marker.id == parseInt(markerId)) {
-						marker.pin.setMap(marker.setVisibility(_this3.map));
+						marker.pin.setMap(marker.setVisibility(_this4.map));
 					}
 				}, markerId);
 
@@ -236,13 +256,13 @@
 		}, {
 			key: "focusMarker",
 			value: function focusMarker(markerId) {
-				var _this4 = this;
+				var _this5 = this;
 
 				this.hideAllMarkers();
 
 				this.markers.forEach(function (marker) {
 					if (marker.id == parseInt(markerId)) {
-						marker.pin.setMap(marker.setVisibility(_this4.map));
+						marker.pin.setMap(marker.setVisibility(_this5.map));
 					}
 				}, markerId);
 			}
@@ -255,13 +275,13 @@
 		}, {
 			key: "highlight",
 			value: function highlight(markerId) {
-				var _this5 = this;
+				var _this6 = this;
 
 				this.focusMarker(markerId);
 				this._setBounds();
 
 				var promise = new Promise(function (resolve, reject) {
-					var marker = _this5._getMarker(markerId);
+					var marker = _this6._getMarker(markerId);
 
 					if (marker) {
 						resolve(marker);
@@ -286,17 +306,17 @@
 		}, {
 			key: "compileAges",
 			value: function compileAges() {
-				var _this6 = this;
+				var _this7 = this;
 
 				this.markers.forEach(function (service) {
 					for (var age in service.ages) {
 						age = service.ages[age];
 
-						if (!_this6.ages[age]) {
-							_this6.ages[age] = [];
+						if (!_this7.ages[age]) {
+							_this7.ages[age] = [];
 						}
 
-						_this6.ages[age].push(service);
+						_this7.ages[age].push(service);
 					}
 				});
 			}
@@ -308,17 +328,17 @@
 		}, {
 			key: "compileServiceTypes",
 			value: function compileServiceTypes() {
-				var _this7 = this;
+				var _this8 = this;
 
 				this.markers.forEach(function (service) {
 					for (var index in service.services) {
 						var serviceType = service.services[index];
 
-						if (!_this7.serviceTypes[serviceType]) {
-							_this7.serviceTypes[serviceType] = [];
+						if (!_this8.serviceTypes[serviceType]) {
+							_this8.serviceTypes[serviceType] = [];
 						}
 
-						_this7.serviceTypes[serviceType].push(service);
+						_this8.serviceTypes[serviceType].push(service);
 					}
 				});
 			}
@@ -389,17 +409,17 @@
 		}, {
 			key: "apply",
 			value: function apply() {
-				var _this8 = this;
+				var _this9 = this;
 
 				var methods = [];
 				this.showAllMarkers();
 
 				var _loop = function _loop(method) {
 					methods.push(function () {
-						var filter = _this8.filters[method];
+						var filter = _this9.filters[method];
 
 						var promise = new Promise(function (resolve, reject) {
-							resolve(_this8[filter.method](filter.value));
+							resolve(_this9[filter.method](filter.value));
 						});
 
 						return promise;
@@ -425,7 +445,7 @@
 		}, {
 			key: "ageFilter",
 			value: function ageFilter(selected) {
-				var _this9 = this;
+				var _this10 = this;
 
 				var markers = this.getActiveMarkers();
 
@@ -434,10 +454,10 @@
 						// filter the ages to just show the ones that meet the chosen
 						// filter option
 						var filtered = markers.filter(function (marker) {
-							return _this9.ages[age].includes(marker);
+							return _this10.ages[age].includes(marker);
 						});
 
-						_this9.showMarkers(filtered);
+						_this10.showMarkers(filtered);
 					}
 				};
 
@@ -457,7 +477,7 @@
 		}, {
 			key: "typeFilter",
 			value: function typeFilter(selected) {
-				var _this10 = this;
+				var _this11 = this;
 
 				var markers = this.getActiveMarkers();
 
@@ -466,10 +486,10 @@
 						// filter the service types to just show the ones that meet 
 						// the selected value
 						var filtered = markers.filter(function (marker) {
-							return _this10.serviceTypes[serviceType].includes(marker);
+							return _this11.serviceTypes[serviceType].includes(marker);
 						});
 
-						_this10.showMarkers(filtered);
+						_this11.showMarkers(filtered);
 					}
 				};
 
@@ -489,12 +509,12 @@
 		}, {
 			key: "showMarkers",
 			value: function showMarkers(markers, emitVisibleItems) {
-				var _this11 = this;
+				var _this12 = this;
 
 				this.hideAllMarkers();
 
 				markers.forEach(function (marker) {
-					_this11.showMarker(marker.id);
+					_this12.showMarker(marker.id);
 				});
 			}
 
@@ -612,20 +632,20 @@
 		}, {
 			key: "_setBounds",
 			value: function _setBounds() {
-				var _this12 = this;
+				var _this13 = this;
 
 				_googleMaps2.default.load(function (google) {
 					var bounds = new google.maps.LatLngBounds();
 
 					new Promise(function (resolve, reject) {
-						resolve(_this12.getActiveMarkers());
+						resolve(_this13.getActiveMarkers());
 					}).then(function (markers) {
 						for (var m in markers) {
 							bounds.extend(markers[m].pin.getPosition());
 						}
 
-						_this12.map.fitBounds(bounds);
-						_this12._setZoom();
+						_this13.map.fitBounds(bounds);
+						_this13._setZoom();
 					});
 				});
 			}
@@ -1073,7 +1093,7 @@
 		startZoom: 14,
 		mapType: "roadmap",
 		kml: {
-			start: 'https://raw.githubusercontent.com/paulschneider/kml-test/master/source-4.kml?123132654',
+			start: 'https://raw.githubusercontent.com/paulschneider/kml-test/master/nwmh-catchment-areas-march-2017.kml?123132654',
 			replacement: 'https://raw.githubusercontent.com/paulschneider/kml-test/master/source-5.kml?123132654'
 		}
 	});
