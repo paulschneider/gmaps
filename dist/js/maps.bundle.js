@@ -176,7 +176,11 @@
 						_this._emitVisibleItemsEvent();
 					});
 
-					document.dispatchEvent(document.createEvent("gmaps-available"));
+					var availabilityEvent = new CustomEvent('gmaps-available');
+
+					document.dispatchEvent(availabilityEvent);
+
+					//document.dispatchEvent(document.createEvent("gmaps-available"));
 				});
 			}
 
@@ -627,7 +631,11 @@
 		}, {
 			key: "_mapFiltered",
 			value: function _mapFiltered() {
-				document.dispatchEvent(document.createEvent("gmaps-filter-changed"));
+
+				var filterEvent = new CustomEvent('gmaps-filter-changed');
+
+				document.dispatchEvent(filterEvent);
+
 				//document.dispatchEvent(new Event('gmaps-filter-changed'));	
 			}
 

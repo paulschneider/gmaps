@@ -42,7 +42,11 @@ export default class Map {
 				this._emitVisibleItemsEvent();				
 			});	
 
-			document.dispatchEvent(document.createEvent("gmaps-available"));
+			let availabilityEvent = new CustomEvent('gmaps-available');
+
+			document.dispatchEvent(availabilityEvent);
+
+			//document.dispatchEvent(document.createEvent("gmaps-available"));
 		});
 	}
 
@@ -394,7 +398,12 @@ export default class Map {
 	 *
 	 */
 	_mapFiltered() {
-		document.dispatchEvent(document.createEvent("gmaps-filter-changed"));
+
+		let filterEvent = new CustomEvent('gmaps-filter-changed');
+
+		document.dispatchEvent(filterEvent);
+
+
 		//document.dispatchEvent(new Event('gmaps-filter-changed'));	
 	}
 
