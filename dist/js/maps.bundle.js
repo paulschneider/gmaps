@@ -174,7 +174,7 @@
 						_this._emitVisibleItemsEvent();
 					});
 
-					document.dispatchEvent(new Event('gmap-available'));
+					document.dispatchEvent(new Event('gmaps-available'));
 				});
 			}
 
@@ -465,6 +465,8 @@
 					_loop2(age);
 				}
 
+				this._mapFiltered();
+
 				// we need to return something for the promise to complete
 				return true;
 			}
@@ -496,6 +498,8 @@
 				for (var serviceType in this.serviceTypes) {
 					_loop3(serviceType);
 				}
+
+				this._mapFiltered();
 
 				// we need to return something for the promise to complete
 				return true;
@@ -589,7 +593,6 @@
 					}
 				}
 
-				this._mapFiltered();
 				this._setBounds();
 				return this.filters.push({ method: filter, value: option });
 			}
@@ -621,7 +624,7 @@
 		}, {
 			key: "_mapFiltered",
 			value: function _mapFiltered() {
-				document.dispatchEvent(new Event('gmap-filter-changed'));
+				document.dispatchEvent(new Event('gmaps-filter-changed'));
 			}
 
 			/**

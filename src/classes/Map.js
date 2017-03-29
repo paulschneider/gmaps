@@ -40,7 +40,7 @@ export default class Map {
 				this._emitVisibleItemsEvent();
 			});	
 
-			document.dispatchEvent(new Event('gmap-available'));
+			document.dispatchEvent(new Event('gmaps-available'));
 		});
 	}
 
@@ -57,7 +57,7 @@ export default class Map {
 			this.kmlLayer.setMap(this.map);
 		});		
 	}
-	
+
 	/**
 	 * return the underlying google maps instance
 	 *
@@ -267,6 +267,8 @@ export default class Map {
 			}
 		}
 
+		this._mapFiltered();
+
 		// we need to return something for the promise to complete
 		return true;
 	}	
@@ -289,6 +291,8 @@ export default class Map {
 				this.showMarkers(filtered);
 			}
 		}
+
+		this._mapFiltered();
 
 		// we need to return something for the promise to complete
 		return true;
@@ -361,8 +365,7 @@ export default class Map {
 				return this.filters[active].value = option;
 			}
 		}
-
-		this._mapFiltered();
+		
 		this._setBounds();
 		return this.filters.push({method: filter, value:  option});
 	}
@@ -388,7 +391,7 @@ export default class Map {
 	 *
 	 */
 	_mapFiltered() {
-		document.dispatchEvent(new Event('gmap-filter-changed'));	
+		document.dispatchEvent(new Event('gmaps-filter-changed'));	
 	}
 
 	/**
