@@ -176,7 +176,7 @@
 						_this._emitVisibleItemsEvent();
 					});
 
-					document.dispatchEvent(new Event('gmaps-available'));
+					document.dispatchEvent(document.createEvent("gmaps-available"));
 				});
 			}
 
@@ -627,7 +627,8 @@
 		}, {
 			key: "_mapFiltered",
 			value: function _mapFiltered() {
-				document.dispatchEvent(new Event('gmaps-filter-changed'));
+				document.dispatchEvent(document.createEvent("gmaps-filter-changed"));
+				//document.dispatchEvent(new Event('gmaps-filter-changed'));	
 			}
 
 			/**
