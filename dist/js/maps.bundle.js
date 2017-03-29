@@ -54,8 +54,8 @@
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	window.IconMap = function (services) {
-		var app = new _Map2.default(_Setup.Setup, services);
+	window.IconMap = function (data) {
+		var app = new _Map2.default(_Setup.Setup, data);
 
 		app.build();
 
@@ -132,11 +132,13 @@
 	  * class constructor
 	  * 
 	  */
-		function Map(config, services) {
+		function Map(config, data) {
 			_classCallCheck(this, Map);
 
+			this.data = data;
+
 			this.config = config;
-			this.services = services;
+			this.services = this.data.locations;
 			this.kmlLayer = null;
 			this.markers = [];
 			this.map = null;
@@ -165,7 +167,7 @@
 						mapTypeId: _this.config.mapType
 					});
 
-					_this.loadKml(_this.config.kml.start);
+					_this.loadKml(_this.data.catchment_areas_url);
 					_this.addMarkers(true);
 					_this.compileAges();
 					_this.compileServiceTypes();

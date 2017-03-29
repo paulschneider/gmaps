@@ -9,7 +9,10 @@
 * fire up a new map instance
 
 ```
-	new IconMap(services = {});
+	var app = new IconMap({
+		"locations": [...],
+		"catchment_areas_url": "https://......"
+	});
 ```
 
 ### Event listeners are added to the following classes when the app is fired up: ###
@@ -41,8 +44,8 @@
 * gmaps-centre-marker
 * gmaps-visible-markers
 * gmaps-marker-identity
-* gmap-available
-* gmap-filter-changed
+* gmaps-available
+* gmaps-filter-changed
 
 #### Example Events #####
 
@@ -64,7 +67,7 @@
 		console.log(e.detail.marker);
 	});
 
-	document.addEventListener("gmap-available", function(e) {
+	document.addEventListener("gmaps-available", function(e) {
 		console.log("google maps is available");
 		console.log(app.map());
 	});

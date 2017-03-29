@@ -1,8 +1,8 @@
 import Map from "./classes/Map";
 import {Setup as Config} from "./config/Setup";
 
-window.IconMap = function(services) {
-	let app = new Map(Config, services);
+window.IconMap = function(data) {
+	let app = new Map(Config, data);
 	
 	app.build();
 

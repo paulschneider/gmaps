@@ -73,37 +73,40 @@
 
 		<script src="./dist/js/maps.bundle.js"></script>    
 		<script type="text/javascript">
-			var app  = new IconMap([
-				{
-					"id":"10",
-					"name":"The Royal Melbourne Hospital",
-					"location":{
-						"lat":-37.7987306,
-						"lng":144.9541244
-					},
-					"ages":["14"],
-					"services":["18"]},
-    			{
-    				"id":22,
-    				"name":"Werribee Mercy Hospital",
-    				"location": {
-    					"lat":-37.887066,
-    					"lng":144.695926
-    				},
-    				"ages":["15"],
-    				"services":["17"]
-    			},
-    			{
-    				"id":23,
-    				"name":"Sydney",
-    				"location": {
-    					"lat":-33.8567799,
-    					"lng":151.213108
-    				},
-    				"ages":["15"],
-    				"services":["17"]
-    			}
-    		]);
+			var app  = new IconMap({
+				"locations" : [
+					{
+						"id":"10",
+						"name":"The Royal Melbourne Hospital",
+						"location":{
+							"lat":-37.7987306,
+							"lng":144.9541244
+						},
+						"ages":["14"],
+						"services":["18"]},
+	    			{
+	    				"id":22,
+	    				"name":"Werribee Mercy Hospital",
+	    				"location": {
+	    					"lat":-37.887066,
+	    					"lng":144.695926
+	    				},
+	    				"ages":["15"],
+	    				"services":["17"]
+	    			},
+	    			{
+	    				"id":23,
+	    				"name":"Sydney",
+	    				"location": {
+	    					"lat":-33.8567799,
+	    					"lng":151.213108
+	    				},
+	    				"ages":["15"],
+	    				"services":["17"]
+	    			}
+    			],
+    			"catchment_areas_url": "https://raw.githubusercontent.com/paulschneider/kml-test/master/nwmh-catchment-areas-march-2017.kml?123132654"
+    		});
 
     		document.addEventListener("gmaps-centre-marker", function(e) {
     			console.log("gmaps-centre-marker");
@@ -122,7 +125,7 @@
     			console.log(e.detail.marker);
     		});
 
-    		document.addEventListener("gmap-available", function(e) {
+    		document.addEventListener("gmaps-available", function(e) {
     			console.log("google maps is available");
     			console.log(app.map());
     		});  

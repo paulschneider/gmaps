@@ -6,9 +6,11 @@ export default class Map {
 	 * class constructor
 	 * 
 	 */
-	constructor(config, services) {
+	constructor(config, data) {
+		this.data 			= data;
+
 		this.config 		= config;
-		this.services 		= services;
+		this.services 		= this.data.locations;
 		this.kmlLayer 		= null;
 		this.markers 		= [];
 		this.map 			= null;
@@ -31,7 +33,7 @@ export default class Map {
 				mapTypeId: this.config.mapType
 			});
 
-			this.loadKml(this.config.kml.start);
+			this.loadKml(this.data.catchment_areas_url);
 			this.addMarkers(true);
 			this.compileAges();	
 			this.compileServiceTypes();	
