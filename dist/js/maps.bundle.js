@@ -167,10 +167,10 @@
 						mapTypeId: _this.config.mapType
 					});
 
-					_this.loadKml(_this.data.catchment_areas_url);
 					_this.addMarkers(true);
 					_this.compileAges();
 					_this.compileServiceTypes();
+					_this.loadKml(_this.data.catchment_areas_url);
 
 					_this.map.addListener('idle', function (event) {
 						_this._emitVisibleItemsEvent();
@@ -192,7 +192,8 @@
 
 				_googleMaps2.default.load(function (google) {
 					_this2.kmlLayer = new google.maps.KmlLayer({
-						url: src
+						url: src,
+						preserveViewport: true
 					});
 
 					_this2.kmlLayer.setMap(_this2.map);

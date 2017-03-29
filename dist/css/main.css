@@ -4,10 +4,8 @@ html, body {
   margin: 0; }
 
 #map {
-  height: 1000px;
-  width: 1000px;
+  height: 300px;
+  width: 100%;
   overflow: hidden;
   float: left;
   border: thin solid #333; }
-
-/*# sourceMappingURL=main.css.map */

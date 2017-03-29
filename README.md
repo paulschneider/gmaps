@@ -80,5 +80,5 @@
 ### CSS Sass-ing ###
 
 ```
-	*sass --watch sass:public/dist/css 
+	* sass --watch sass:public/dist/css 
 ```

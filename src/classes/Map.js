@@ -32,14 +32,14 @@ export default class Map {
 				zoom: this.config.startZoom,
 				mapTypeId: this.config.mapType
 			});
-
-			this.loadKml(this.data.catchment_areas_url);
+			
 			this.addMarkers(true);
 			this.compileAges();	
 			this.compileServiceTypes();	
-			
-			this.map.addListener('idle', (event) => {
-				this._emitVisibleItemsEvent();
+			this.loadKml(this.data.catchment_areas_url);
+
+			this.map.addListener('idle', (event) => {				
+				this._emitVisibleItemsEvent();				
 			});	
 
 			document.dispatchEvent(new Event('gmaps-available'));
@@ -53,7 +53,8 @@ export default class Map {
 	loadKml(src) {
 		GoogleMaps.load((google) => {		
 			this.kmlLayer = new google.maps.KmlLayer({
-				url: src
+				url: src,
+				preserveViewport: true
 			});
 
 			this.kmlLayer.setMap(this.map);
@@ -64,7 +65,7 @@ export default class Map {
 	 * return the underlying google maps instance
 	 *
 	 */
-	getMap() {
+	getMap() {		
 		return this.map;
 	}
 
@@ -412,7 +413,7 @@ export default class Map {
 				}
 				
 				this.map.fitBounds(bounds);	
-				this._setZoom();			
+				this._setZoom();							
 			});					
 		});
 	}
