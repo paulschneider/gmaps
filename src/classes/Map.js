@@ -183,7 +183,7 @@ export default class Map {
 		document.getElementById("selected-age").innerHTML = e.target.innerHTML;
 		this._setActiveClass(e);
 		
-		let selected = e.target.dataset.value;
+		let selected = e.target.getAttribute("data-value");
 
 		if(!selected) {
 			return this.clearFilter("ageFilter").apply();
@@ -200,7 +200,7 @@ export default class Map {
 		document.getElementById("selected-service").innerHTML = e.target.innerHTML;		
 		this._setActiveClass(e);
 
-		let selected = e.target.dataset.value;
+		let selected = e.target.getAttribute("data-value");
 
 		if(!selected) {
 			return this.clearFilter("typeFilter").apply();

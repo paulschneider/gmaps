@@ -14,7 +14,7 @@ window.IconMap = function(data) {
 		element.addEventListener('click', (e) => {
 			e.preventDefault();
 			
-			app.highlight(e.target.dataset.hospitalId);
+			app.highlight(e.target.getAttribute("data-hospitalId"));
 		}, app);
     });
 

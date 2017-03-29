@@ -67,7 +67,7 @@
 			element.addEventListener('click', function (e) {
 				e.preventDefault();
 
-				app.highlight(e.target.dataset.hospitalId);
+				app.highlight(e.target.getAttribute("data-hospitalId"));
 			}, app);
 		});
 
@@ -357,7 +357,7 @@
 				document.getElementById("selected-age").innerHTML = e.target.innerHTML;
 				this._setActiveClass(e);
 
-				var selected = e.target.dataset.value;
+				var selected = e.target.getAttribute("data-value");
 
 				if (!selected) {
 					return this.clearFilter("ageFilter").apply();
@@ -377,7 +377,7 @@
 				document.getElementById("selected-service").innerHTML = e.target.innerHTML;
 				this._setActiveClass(e);
 
-				var selected = e.target.dataset.value;
+				var selected = e.target.getAttribute("data-value");
 
 				if (!selected) {
 					return this.clearFilter("typeFilter").apply();
