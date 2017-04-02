@@ -95,18 +95,6 @@
 			}, app);
 		});
 
-		document.getElementById("kml-load").addEventListener("click", function (e) {
-			e.preventDefault();
-
-			app.loadAllCatchments();
-		});
-
-		document.getElementById("kml-hide").addEventListener("click", function (e) {
-			e.preventDefault();
-
-			app.hideAllCatchments();
-		});
-
 		// expose the underlying google map instance
 		this.map = function () {
 			return app.map;

@@ -40,7 +40,7 @@ window.IconMap = function(data) {
 
 			app.filterByType(e);
 		}, app);
-    });
+    });      
 
 	// expose the underlying google map instance
     this.map = function() {
