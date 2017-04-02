@@ -19,6 +19,7 @@ export default class Map {
 		this.serviceTypes 	= {};
 		this.filters 		= [];
 		this.googlemap 		= null;
+		this.catchments 	= this.data.catchments;
 	}
 
 	/**
@@ -36,7 +37,7 @@ export default class Map {
 			this.addMarkers(true);
 			this.compileAges();	
 			this.compileServiceTypes();	
-			this.loadKml(this.data.catchment_areas_url);
+			this.loadAllCatchments();
 
 			this.map.addListener('idle', (event) => {				
 				this._emitVisibleItemsEvent();				
@@ -45,8 +46,6 @@ export default class Map {
 			let availabilityEvent = new CustomEvent('gmaps-available');
 
 			document.dispatchEvent(availabilityEvent);
-
-			//document.dispatchEvent(document.createEvent("gmaps-available"));
 		});
 	}
 
@@ -54,15 +53,23 @@ export default class Map {
 	 * load up the KML overlay
 	 * 
 	 */
-	loadKml(src) {
+	loadAllCatchments() {
 		GoogleMaps.load((google) => {		
 			this.kmlLayer = new google.maps.KmlLayer({
-				url: src,
+				url: this.catchments.all,
 				preserveViewport: true
 			});
 
 			this.kmlLayer.setMap(this.map);
 		});		
+	}
+
+	/**
+	 * turn off all current KML layers
+	 * 
+	 */
+	hideAllCatchments() {
+		this.kmlLayer.setMap(null);
 	}
 
 	/**
@@ -188,8 +195,12 @@ export default class Map {
 		this._setActiveClass(e);
 		
 		let selected = e.target.getAttribute("data-value");
+		let catchment = e.target.getAttribute("data-catchment");
+		
+		this._showCatchment(catchment);
 
 		if(!selected) {
+			this.loadAllCatchments();
 			return this.clearFilter("ageFilter").apply();
 		}
 
@@ -440,6 +451,8 @@ export default class Map {
 		if(this.getActiveMarkers().length == 0) {
 			return this._reset();
 		}
+
+		return this.map.setZoom(10);
 	}
 
 	/**
@@ -485,4 +498,21 @@ export default class Map {
 			}
 		}
 	}	
+
+	/**
+	 * show a specific catchment area
+	 * 
+	 */
+	_showCatchment(catchment) {
+		this.hideAllCatchments();
+
+		GoogleMaps.load((google) => {		
+			this.kmlLayer = new google.maps.KmlLayer({
+				url: this.catchments[catchment],
+				preserveViewport: true
+			});
+
+			this.kmlLayer.setMap(this.map);
+		});	
+	}
 }

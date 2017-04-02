@@ -95,6 +95,18 @@
 			}, app);
 		});
 
+		document.getElementById("kml-load").addEventListener("click", function (e) {
+			e.preventDefault();
+
+			app.loadAllCatchments();
+		});
+
+		document.getElementById("kml-hide").addEventListener("click", function (e) {
+			e.preventDefault();
+
+			app.hideAllCatchments();
+		});
+
 		// expose the underlying google map instance
 		this.map = function () {
 			return app.map;
@@ -147,6 +159,7 @@
 			this.serviceTypes = {};
 			this.filters = [];
 			this.googlemap = null;
+			this.catchments = this.data.catchments;
 		}
 
 		/**
@@ -170,7 +183,7 @@
 					_this.addMarkers(true);
 					_this.compileAges();
 					_this.compileServiceTypes();
-					_this.loadKml(_this.data.catchment_areas_url);
+					_this.loadAllCatchments();
 
 					_this.map.addListener('idle', function (event) {
 						_this._emitVisibleItemsEvent();
@@ -179,8 +192,6 @@
 					var availabilityEvent = new CustomEvent('gmaps-available');
 
 					document.dispatchEvent(availabilityEvent);
-
-					//document.dispatchEvent(document.createEvent("gmaps-available"));
 				});
 			}
 
@@ -190,18 +201,29 @@
 	   */
 
 		}, {
-			key: "loadKml",
-			value: function loadKml(src) {
+			key: "loadAllCatchments",
+			value: function loadAllCatchments() {
 				var _this2 = this;
 
 				_googleMaps2.default.load(function (google) {
 					_this2.kmlLayer = new google.maps.KmlLayer({
-						url: src,
+						url: _this2.catchments.all,
 						preserveViewport: true
 					});
 
 					_this2.kmlLayer.setMap(_this2.map);
 				});
+			}
+
+			/**
+	   * turn off all current KML layers
+	   * 
+	   */
+
+		}, {
+			key: "hideAllCatchments",
+			value: function hideAllCatchments() {
+				this.kmlLayer.setMap(null);
 			}
 
 			/**
@@ -362,8 +384,12 @@
 				this._setActiveClass(e);
 
 				var selected = e.target.getAttribute("data-value");
+				var catchment = e.target.getAttribute("data-catchment");
+
+				this._showCatchment(catchment);
 
 				if (!selected) {
+					this.loadAllCatchments();
 					return this.clearFilter("ageFilter").apply();
 				}
 
@@ -680,6 +706,8 @@
 				if (this.getActiveMarkers().length == 0) {
 					return this._reset();
 				}
+
+				return this.map.setZoom(10);
 			}
 
 			/**
@@ -733,6 +761,28 @@
 						return this.markers[marker];
 					}
 				}
+			}
+
+			/**
+	   * show a specific catchment area
+	   * 
+	   */
+
+		}, {
+			key: "_showCatchment",
+			value: function _showCatchment(catchment) {
+				var _this14 = this;
+
+				this.hideAllCatchments();
+
+				_googleMaps2.default.load(function (google) {
+					_this14.kmlLayer = new google.maps.KmlLayer({
+						url: _this14.catchments[catchment],
+						preserveViewport: true
+					});
+
+					_this14.kmlLayer.setMap(_this14.map);
+				});
 			}
 		}]);
 
@@ -1106,11 +1156,7 @@
 		centreLat: -37.8055124,
 		centreLang: 144.9746755,
 		startZoom: 14,
-		mapType: "roadmap",
-		kml: {
-			start: 'https://raw.githubusercontent.com/paulschneider/kml-test/master/nwmh-catchment-areas-march-2017.kml?123132654',
-			replacement: 'https://raw.githubusercontent.com/paulschneider/kml-test/master/source-5.kml?123132654'
-		}
+		mapType: "roadmap"
 	});
 
 /***/ }

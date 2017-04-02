@@ -14,9 +14,9 @@
 			<span id="selected-age">All age groups</span>
 			<ul id="age-filter">
 				<li><a href="#" class="age-link" data-value="">All age groups</a></li>
-				<li><a href="#" class="age-link" data-value="14">Youth 16 to 25</a></li>
-				<li><a href="#" class="age-link" data-value="15">Adult 25 to 55</a></li>
-				<li><a href="#" class="age-link" data-value="16">Other adult 55+</a></li>
+				<li><a href="#" class="age-link" data-value="14" data-catchment="youth">Youth 16 to 25</a></li>
+				<li><a href="#" class="age-link" data-value="15" data-catchment="adult">Adult 25 to 55</a></li>
+				<li><a href="#" class="age-link" data-value="16" data-catchment="aged">Other adult 55+</a></li>
 			</ul>
 		</p>
 	
@@ -35,43 +35,12 @@
 				<li><a href="#" class="service-type" data-value="24">Emergency Mental Health (EMH)</a></li>
 			</ul>
 		</p>
-		
-		<ul>
-			<li>
-				<div class="service">
-					<h3>The Royal Melbourne Hospital</h3>
-					300 Grattan St, <br /> 
-					Parkville <br /> 
-					VIC<br /> 
-					3050
-					<p>
-						<a class="front-centre" href="#" data-hospital-id="10">Show on Map</a>
-					</p>	
-				</div>
-			</li>
-			<li>
-				<div class="service">
-					<h3>Werribee Mercy Hospital</h3>
-					300-310 Princes Hwy, <br /> 
-					Werribee <br /> 
-					VIC<br /> 
-					3030
-					<p>
-						<a class="front-centre" href="#" data-hospital-id="22">Show on Map</a>
-					</p>	
-				</div>
-			</li>	
-			<li>
-				<div class="service">
-					<h3>Sydney</h3>
-					<p>
-						<a class="front-centre" href="#" data-hospital-id="23">Show on Map</a>
-					</p>	
-				</div>
-			</li>			
-		</ul>
 
-		<script src="./dist/js/maps.bundle.js"></script>    
+		<a href="#" id="kml-load">Load KML</a>
+		<br />
+		<a href="#" id="kml-hide">Hide KML</a>
+
+		<script src="./dist/js/maps.bundle.js?time=12321"></script>    
 		<script type="text/javascript">
 			var app  = new IconMap({
 				"locations" : [
@@ -780,7 +749,12 @@
 				        ]
 				    }
 				],
-    			"catchment_areas_url": "https://raw.githubusercontent.com/paulschneider/kml-test/master/nwmh-catchment-areas-march-2017.kml?123132654"
+    			"catchments": {
+    				"all" : "https://raw.githubusercontent.com/paulschneider/kml-test/master/nwmh-catchment-areas-march-2017.kml?23234234",
+    				"youth" : "https://raw.githubusercontent.com/paulschneider/kml-test/master/Youth.kml",
+    				"adult" : "https://raw.githubusercontent.com/paulschneider/kml-test/master/Adult.kml",
+    				"aged" : "https://raw.githubusercontent.com/paulschneider/kml-test/master/Aged.kml",
+    			}
     		});
 
     		document.addEventListener("gmaps-centre-marker", function(e) {
