@@ -3,6 +3,6 @@ export const Setup = Object.freeze({
 	selector : "#map",
 	centreLat: -37.8055124,
 	centreLang: 144.9746755,
-	startZoom: 14,
+	startZoom: 10,
 	mapType: "roadmap",
 });

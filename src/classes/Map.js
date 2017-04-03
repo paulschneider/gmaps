@@ -20,6 +20,8 @@ export default class Map {
 		this.filters 		= [];
 		this.googlemap 		= null;
 		this.catchments 	= this.data.catchments;
+
+		console.log(this.catchments);
 	}
 
 	/**
@@ -69,6 +71,7 @@ export default class Map {
 	 * 
 	 */
 	hideAllCatchments() {
+		console.log("hiding all catchments");
 		this.kmlLayer.setMap(null);
 	}
 
@@ -506,13 +509,15 @@ export default class Map {
 	_showCatchment(catchment) {
 		this.hideAllCatchments();
 
+		console.log("before new filter catchment kml");
 		GoogleMaps.load((google) => {		
 			this.kmlLayer = new google.maps.KmlLayer({
 				url: this.catchments[catchment],
 				preserveViewport: true
 			});
-
+			console.log("adding filtered kml layer to map");
 			this.kmlLayer.setMap(this.map);
+			console.log("after filtered kml layer added to map");
 		});	
 	}
 }

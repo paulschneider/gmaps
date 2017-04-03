@@ -148,6 +148,8 @@
 			this.filters = [];
 			this.googlemap = null;
 			this.catchments = this.data.catchments;
+
+			console.log(this.catchments);
 		}
 
 		/**
@@ -211,6 +213,7 @@
 		}, {
 			key: "hideAllCatchments",
 			value: function hideAllCatchments() {
+				console.log("hiding all catchments");
 				this.kmlLayer.setMap(null);
 			}
 
@@ -763,13 +766,15 @@
 
 				this.hideAllCatchments();
 
+				console.log("before new filter catchment kml");
 				_googleMaps2.default.load(function (google) {
 					_this14.kmlLayer = new google.maps.KmlLayer({
 						url: _this14.catchments[catchment],
 						preserveViewport: true
 					});
-
+					console.log("adding filtered kml layer to map");
 					_this14.kmlLayer.setMap(_this14.map);
+					console.log("after filtered kml layer added to map");
 				});
 			}
 		}]);
@@ -1143,7 +1148,7 @@
 		selector: "#map",
 		centreLat: -37.8055124,
 		centreLang: 144.9746755,
-		startZoom: 14,
+		startZoom: 10,
 		mapType: "roadmap"
 	});
 
